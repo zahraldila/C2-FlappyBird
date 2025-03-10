@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Iraylib/include
 LDFLAGS = -Lraylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
 OUTPUT = build/game.exe
-SRC = src/main.c
+SRC = src/main.c src/bird.c  # Tambahkan bird.c
 
 build: $(SRC)
 	@if not exist build mkdir build
