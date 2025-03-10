@@ -5,17 +5,28 @@ int main() {
     const int screenWidth = 800;
     const int screenHeight = 600;
     
-    InitWindow(screenWidth, screenHeight, "Flappy Bird with Image");
+    InitWindow(screenWidth, screenHeight, "Flappy Bird with Menu");
 
-    // Buat burung di tengah layar dengan skala 0.4 (40% ukuran aslinya)
-    Bird bird = CreateBird(screenWidth / 6, screenHeight / 2, "flappy.png", 0.4f);
+    GameState currentState = MENU;
+
+    // Buat burung di tengah dan sedikit ke kiri
+    float birdX = screenWidth * 0.3f;
+    float birdY = screenHeight / 2;
+    Bird bird = CreateBird(birdX, birdY, "flappy.png", 0.3f);
 
     SetTargetFPS(60);
     
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(SKYBLUE);
-        DrawBird(bird);
+
+        if (currentState == MENU) {
+            currentState = DrawMenu(screenWidth, screenHeight);
+        } 
+        else if (currentState == GAMEPLAY) {
+            DrawBird(bird);
+        }
+
         EndDrawing();
     }
 
