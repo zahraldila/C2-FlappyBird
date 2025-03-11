@@ -12,7 +12,7 @@ int main() {
     // Buat burung di tengah dan sedikit ke kiri
     float birdX = screenWidth * 0.3f;
     float birdY = screenHeight / 2;
-    Bird bird = CreateBird(birdX, birdY, "flappy.png", 0.3f);
+    Bird bird = CreateBird(birdX, birdY, "flappy.png", 0.4f);
 
     SetTargetFPS(60);
     
