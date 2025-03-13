@@ -1,36 +1,64 @@
+// File: main.c
 #include "raylib.h"
+#include "dava.h"
 #include "zakky.h"
+#include "alexandrio.h"
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+#define MAX_BIRDS 1
 
 int main() {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
-    
-    InitWindow(screenWidth, screenHeight, "Flappy Bird with Menu");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird - Combined Version");
+    SetTargetFPS(60);
+
+    // Variabel untuk posisi background
+    float bgX = 0;
+    Texture2D cityBg = LoadTexture("city.png");
 
     GameState currentState = MENU;
 
-    // Buat burung di tengah dan sedikit ke kiri
-    float birdX = screenWidth * 0.3f;
-    float birdY = screenHeight / 2;
-    Bird bird = CreateBird(birdX, birdY, "flappy.png", 0.4f);
+    Bird birds[MAX_BIRDS];
+    InitBirds(birds, MAX_BIRDS);
+    Bird bird = CreateBird(SCREEN_WIDTH / 8, SCREEN_HEIGHT / 2, "Flappy.png", 0.8f);
 
-    SetTargetFPS(60);
-    
+    int Pipa[3][3];
+    Buat_pipa(Pipa);
+
     while (!WindowShouldClose()) {
+        // Update background position
+        bgX -= 0.5f;
+        if (bgX <= -SCREEN_WIDTH) {
+            bgX = 0;
+        }
+
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
+        // Gambar background di belakang
+        DrawBackground(cityBg, bgX);
+
         if (currentState == MENU) {
-            currentState = DrawMenu(screenWidth, screenHeight);
+            currentState = DrawMenu(SCREEN_WIDTH, SCREEN_HEIGHT);
         } 
         else if (currentState == GAMEPLAY) {
-            DrawBird(bird);
+            // Update objek game
+            UpdateBirds(birds, MAX_BIRDS);
+            Pergerakan_pipa(Pipa);
+
+            // Gambar objek game
+            DrawBirds(birds, MAX_BIRDS);
+            Gambar_pipa(Pipa);
+            DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
         }
 
         EndDrawing();
     }
 
+    // Unload assets
+    UnloadBirds(birds, MAX_BIRDS);
     UnloadBird(&bird);
+    UnloadTexture(cityBg);
     CloseWindow();
 
     return 0;
