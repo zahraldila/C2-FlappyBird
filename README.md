@@ -3,7 +3,9 @@
 ### **Kelompok C-2**
 
 Jurusan          : Jurusan Teknik Komputer dan Informatika
+
 Prodi            : D3 - Teknik Informatika
+
 Manager Proyek   : Djoko Cahyo Utomo
 
 | Nama                    | Tugas                 | NIM  |
@@ -25,7 +27,9 @@ Game ini dikembangkan sebagai bagian dari pembelajaran pemrograman game mengguna
 - Jika burung menyentuh pipa atau tanah, permainan berakhir.
 - Dapatkan skor setinggi mungkin dengan melewati pipa!
 
-* Fitur*
+
+
+*Fitur*
 - Gravitasi pada burung
 - obstacle berupa pipa
 - input key
