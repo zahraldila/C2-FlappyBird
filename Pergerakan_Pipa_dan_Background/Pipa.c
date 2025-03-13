@@ -7,6 +7,8 @@
 #define LEBAR_PIPA 80
 #define JARAK_PIPA_ATAS_BAWAH 150
 #define KECEPATAN_PIPA 2
+Color TANAH = {240, 164, 0 , 255};
+Color RUMPUT = {0, 150, 0 , 255};
 
 
 
@@ -35,6 +37,8 @@ void Gambar_pipa(int Pipa[3][3]){
     for(int i = 0; i < 3; i++){
         DrawRectangle(Pipa[i][0], 0, LEBAR_PIPA, Pipa[i][1], GREEN);
         DrawRectangle(Pipa[i][0], Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - Pipa[i][1] - JARAK_PIPA_ATAS_BAWAH, GREEN);
+        DrawRectangle(0, 400, LEBAR_LAYAR, 100, TANAH);
+        DrawRectangle(0, 400, LEBAR_LAYAR, 15, RUMPUT);
     }
 }
 
