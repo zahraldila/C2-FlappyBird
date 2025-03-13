@@ -2,11 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define LEBAR_LAYAR 800
-#define TINGGI_LAYAR 450
-#define LEBAR_PIPA 80
-#define JARAK_PIPA_ATAS_BAWAH 150
-#define KECEPATAN_PIPA 2
 Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};
 
@@ -54,21 +49,3 @@ void Gambar_pipa(int Pipa[3][3], int TutupPipa[3][3]){
 }
 
 
-int main() {
-    InitWindow(LEBAR_LAYAR, TINGGI_LAYAR, "Flappy Bird Pipes");
-    SetTargetFPS(60);
-    srand(time(NULL));
-    int Pipa[3][3], TutupPipa[3][3];      
-    Buat_pipa(Pipa, TutupPipa);
-    // cukup Pipa tidak perlu Pipa[3][3] karena sudah mengirim alamat array
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(SKYBLUE);
-        Pergerakan_pipa(Pipa, TutupPipa);   
-        Gambar_pipa(Pipa, TutupPipa);
-        EndDrawing();
-    }
-    
-    CloseWindow();
-    return 0;
-}
