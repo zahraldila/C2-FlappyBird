@@ -129,3 +129,19 @@ GameState DrawMenu(int screenWidth, int screenHeight) {
 
     return state;
 }
+
+void InitBackground(Texture2D *bg) {
+    *bg = LoadTexture("city.png"); // Load gambar kota
+}
+
+void UpdateBackground(float *bgX) {
+    *bgX -= 0.5f; // Background bergerak lambat
+    if (*bgX <= -SCREEN_WIDTH) {
+        *bgX = 0; // Reset posisi jika keluar layar
+    }
+}
+
+void DrawBackground(Texture2D bg, float bgX) {
+    DrawTextureEx(bg, (Vector2){bgX, 0}, 0.0f, 1.0f, WHITE);
+    DrawTextureEx(bg, (Vector2){bgX + SCREEN_WIDTH, 0}, 0.0f, 1.0f, WHITE);
+}
