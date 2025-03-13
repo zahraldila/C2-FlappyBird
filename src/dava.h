@@ -13,5 +13,8 @@ void InitBirds(Bird birds[], int count);
 void UpdateBirds(Bird birds[], int count);
 void DrawBirds(Bird birds[], int count);
 void UnloadBirds(Bird birds[], int count);
+void InitBackground(Texture2D *bg);
+void UpdateBackground(float *bgX);
+void DrawBackground(Texture2D bg, float bgX);
 
 #endif
