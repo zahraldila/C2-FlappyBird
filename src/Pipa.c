@@ -6,6 +6,8 @@
 Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};
 
+int Pipa[3][3];
+int TutupPipa[3][3];
 
 
 void Buat_pipa(int Pipa[3][3], int TutupPipa[3][3]){

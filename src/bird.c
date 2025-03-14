@@ -6,56 +6,56 @@
 #include <stdlib.h>
 #include <time.h>
 
-Color TANAH = {240, 164, 0 , 255};
-Color RUMPUT = {0, 150, 0 , 255};
 
-// Implementasi dari bird.c
-void InitBirds(Bird birds[], int count) {
+float bgX;
+
+//  Implementasi dari bird.c
+void InitBirds(Bird bird[], int count) {
     Image img = LoadImage("Flappy.png");
     ImageResize(&img, img.width / 2, img.height / 2);
     
     for (int i = 0; i < count; i++) {
-        birds[i].texture = LoadTextureFromImage(img);
-        birds[i].position = (Vector2){0, 200};
-        birds[i].speed = 0;
+        bird[i].texture = LoadTextureFromImage(img);
+        bird[i].position = (Vector2){0, 200};
+        bird[i].speed = 0;
     }
     
     UnloadImage(img);
 }
 
-void UpdateBirds(Bird birds[], int count) {
+void UpdateBirds(Bird bird[], int count) {
     for (int i = 0; i < count; i++) {
-        birds[i].speed += GRAVITY;  // Tambahkan gravitasi
+        bird[i].speed += GRAVITY;  // Tambahkan gravitasi
 
         if (IsKeyPressed(KEY_SPACE)) {
-            birds[i].speed = FLAP_STRENGTH;
+            bird[i].speed = FLAP_STRENGTH;
         }        
 
-        birds[i].position.y += birds[i].speed;  // Perbarui posisi burung
+        bird[i].position.y += bird[i].speed;  // Perbarui posisi burung
 
         // Cegah burung jatuh ke tanah
-        if (birds[i].position.y > 385) {
-            birds[i].position.y = 385;
-            birds[i].speed = 0;
+        if (bird[i].position.y > 385) {
+            bird[i].position.y = 385;
+            bird[i].speed = 0;
         }
 
         // Cegah burung terbang di luar layar atas
-        if (birds[i].position.y < -15) {
-            birds[i].position.y = -15;
-            birds[i].speed = 0;
+        if (bird[i].position.y < -15) {
+            bird[i].position.y = -15;
+            bird[i].speed = 0;
         }
     }
 }
 
-void DrawBirds(Bird birds[], int count) {
+void DrawBirds(Bird bird[], int count) {
     for (int i = 0; i < count; i++) {
-        DrawTexture(birds[i].texture, (int)birds[i].position.x, (int)birds[i].position.y, WHITE);
+        DrawTexture(bird[i].texture, (int)bird[i].position.x, (int)bird[i].position.y, WHITE);
     }
 }
 
-void UnloadBirds(Bird birds[], int count) {
+void UnloadBirds(Bird bird[], int count) {
     for (int i = 0; i < count; i++) {
-        UnloadTexture(birds[i].texture);
+        UnloadTexture(bird[i].texture);
     }
 }
 
@@ -68,44 +68,10 @@ Bird CreateBird(float x, float y, const char *texturePath, float scale) {
     return bird;
 }
 
-
-
 void UnloadBird(Bird *bird) {
     UnloadTexture(bird->texture);
 }
 
-
-
-GameState DrawMenu(int screenWidth, int screenHeight) {
-    GameState state = MENU;
-
-    // Gambar teks judul
-    DrawText("Flappy Bird", screenWidth / 2 - 100, 100, 40, DARKBLUE);
-
-    // Tombol Start
-    Rectangle startButton = { screenWidth / 2 - 100, 250, 200, 50 };
-    DrawRectangleRec(startButton, GREEN);
-    DrawText("START", screenWidth / 2 - 40, 265, 20, WHITE);
-
-    // Tombol Exit
-    Rectangle exitButton = { screenWidth / 2 - 100, 320, 200, 50 };
-    DrawRectangleRec(exitButton, RED);
-    DrawText("EXIT", screenWidth / 2 - 30, 335, 20, WHITE);
-
-    // Cek klik tombol
-    Vector2 mousePoint = GetMousePosition();
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mousePoint, startButton)) {
-            state = GAMEPLAY;  // Masuk ke game
-        }
-        if (CheckCollisionPointRec(mousePoint, exitButton)) {
-            CloseWindow(); // Tutup jendela game
-            exit(0);       // Keluar dari program sepenuhnya
-        }
-    }
-
-    return state;
-}
 
 void InitBackground(Texture2D *bg) {
     *bg = LoadTexture("city.png"); // Load gambar kota
@@ -113,12 +79,12 @@ void InitBackground(Texture2D *bg) {
 
 void UpdateBackground(float *bgX) {
     *bgX -= 0.5f; // Background bergerak lambat
-    if (*bgX <= -SCREEN_WIDTH) {
+    if (*bgX <= -LEBAR_LAYAR) {
         *bgX = 0; // Reset posisi jika keluar layar
     }
 }
 
 void DrawBackground(Texture2D bg, float bgX) {
     DrawTextureEx(bg, (Vector2){bgX, 0}, 0.0f, 1.0f, WHITE);
-    DrawTextureEx(bg, (Vector2){bgX + SCREEN_WIDTH, 0}, 0.0f, 1.0f, WHITE);
+    DrawTextureEx(bg, (Vector2){bgX + LEBAR_LAYAR, 0}, 0.0f, 1.0f, WHITE);
 }

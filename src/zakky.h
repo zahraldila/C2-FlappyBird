@@ -2,17 +2,7 @@
 #define ZAKKY_H
 
 #include "raylib.h"
-
-typedef struct {
-    Vector2 position;
-    Texture2D texture;
-    float scale;
-} Bird;
-
-Bird CreateBird(float x, float y, const char *texturePath, float scale);
-void DrawBird(Bird bird);
-void UnloadBird(Bird *bird);
-
+#include "bird_struct.h"
 
 typedef struct {
     Vector2 position;
@@ -20,8 +10,13 @@ typedef struct {
     float height;
     Color color;
 } Pipe;
-Pipe CreatePipe(float x, float y, float width, float height, Color color);
-void DrawPipe(Pipe pipe);
+
+
+extern float bgX;
+Bird CreateBird(float x, float y, const char *texturePath, float scale);
+void DrawBird(Bird bird);
+void UnloadBird(Bird *bird);
+
 
 typedef enum {
     MENU,

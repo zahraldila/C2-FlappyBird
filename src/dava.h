@@ -9,10 +9,10 @@
 #define FLAP_STRENGTH -14.0f
 
 // Deklarasi fungsi
-void InitBirds(Bird birds[], int count);
-void UpdateBirds(Bird birds[], int count);
-void DrawBirds(Bird birds[], int count);
-void UnloadBirds(Bird birds[], int count);
+void InitBirds(Bird bird[], int count);
+void UpdateBirds(Bird bird[], int count);
+void DrawBirds(Bird bird[], int count);
+void UnloadBirds(Bird bird[], int count);
 void InitBackground(Texture2D *bg);
 void UpdateBackground(float *bgX);
 void DrawBackground(Texture2D bg, float bgX);
