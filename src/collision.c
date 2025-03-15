@@ -19,9 +19,6 @@ bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
         bird.texture.height * 0.6f   // Tinggi lebih kecil (60% dari texture)
     };
     
-    // Untuk debugging visual (opsional)
-    // DrawRectangleRec(birdRect, (Color){255, 0, 0, 128}); // Tampilkan hitbox merah transparan
-    
     // Periksa collision dengan setiap pipa
     for (int i = 0; i < 3; i++) {
         // Buat rectangle untuk pipa atas dengan margin 5 pixel
@@ -36,8 +33,8 @@ bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
         Rectangle upperPipeCapRect = {
             (float)TutupPipa[i][0] + 5,
             (float)Pipa[i][1] - 30 + 5,
-            LEBAR_PIPA + 10,                 // Kurangi margin
-            20                              // Kurangi tinggi dari 30 ke 20
+            LEBAR_PIPA + 10,                 
+            20                              
         };
         
         // Buat rectangle untuk pipa bawah dengan margin 5 pixel
@@ -53,7 +50,7 @@ bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
             (float)TutupPipa[i][0] + 5,
             (float)(Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH),
             LEBAR_PIPA + 10,
-            20                              // Kurangi tinggi dari 30 ke 20
+            20                              
         };
         
         // Periksa apakah terjadi collision dengan pipa atau tutupnya
@@ -70,14 +67,14 @@ bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
 
 // Fungsi untuk memeriksa collision antara burung dan tanah
 bool CheckBirdGroundCollision(Bird bird) {
-    // Posisi Y tanah sesuai dengan yang ada di file Pipa.c - 400px
-    const int GROUND_Y_POSITION = 400;
+    // Posisi Y tanah sesuai dengan yang ada di file Pipa.c
+    const int GROUND_Y_POSITION = 450;
     
     // Gunakan offset untuk hitbox burung yang lebih akurat
     float birdBottomY = bird.position.y + bird.texture.height * 0.7f;
     
     // Cek apakah bagian bawah burung menyentuh atau melewati tanah
-    if (birdBottomY >= GROUND_Y_POSITION - 5) { // Berikan sedikit toleransi (5 pixel)
+    if (birdBottomY >= GROUND_Y_POSITION - 5) {
         return true; // Collision dengan tanah terdeteksi
     }
     
@@ -96,10 +93,7 @@ GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]
 
 // Fungsi untuk menampilkan layar game over
 void DrawGameOver(int screenWidth, int screenHeight, int score) {
-    // Gambar kotak transparan sebagai background
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, 180});
-    
-    // Tampilkan teks "GAME OVER"
     DrawText("GAME OVER", screenWidth / 2 - 120, screenHeight / 3, 40, RED);
     
     // Tampilkan petunjuk untuk restart
