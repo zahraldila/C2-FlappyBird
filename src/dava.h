@@ -5,8 +5,8 @@
 #include "bird_struct.h"
 
 #define MAX_BIRDS 1
-#define GRAVITY 1.4f
-#define FLAP_STRENGTH -14.0f
+#define GRAVITY 0.5f
+#define FLAP_STRENGTH -8.0f
 
 // Deklarasi fungsi
 void InitBirds(Bird bird[], int count);
