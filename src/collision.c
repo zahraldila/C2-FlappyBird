@@ -12,73 +12,53 @@ GameOverState gameOverState = GAME_ACTIVE;
 
 // Fungsi untuk memeriksa collision antara burung dan pipa
 bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
-    Rectangle birdRect = {
-        bird.position.x + 10,        // Koordinat X dengan offset lebih besar
-        bird.position.y + 10,        // Koordinat Y dengan offset lebih besar
-        bird.texture.width * 0.6f,   // Lebar lebih kecil (60% dari texture)
-        bird.texture.height * 0.6f   // Tinggi lebih kecil (60% dari texture)
-    };
+    // Koordinat penting burung - bagian tengah burung
+    float birdCenterX = bird.position.x + bird.texture.width/2;
+    float birdCenterY = bird.position.y + bird.texture.height/2;
+    float birdRadius = 5;
     
-    // Periksa collision dengan setiap pipa
     for (int i = 0; i < 3; i++) {
-        // Buat rectangle untuk pipa atas dengan margin 5 pixel
-        Rectangle upperPipeRect = {
-            (float)Pipa[i][0] + 5,            // Offset X sedikit
-            0,
-            LEBAR_PIPA - 10,                  // Lebar dengan margin
-            (float)Pipa[i][1] - 5            // Tinggi dengan margin
-        };
+        // Koordinat pipa
+        float pipeLeft = Pipa[i][0];
+        float pipeRight = Pipa[i][0] + LEBAR_PIPA;
         
-        // Buat rectangle untuk tutup pipa atas dengan margin 5 pixel
-        Rectangle upperPipeCapRect = {
-            (float)TutupPipa[i][0] + 5,
-            (float)Pipa[i][1] - 30 + 5,
-            LEBAR_PIPA + 10,                 
-            20                              
-        };
-        
-        // Buat rectangle untuk pipa bawah dengan margin 5 pixel
-        Rectangle lowerPipeRect = {
-            (float)Pipa[i][0] + 5,
-            (float)(Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH + 5),
-            LEBAR_PIPA - 10,
-            (float)(TINGGI_LAYAR - Pipa[i][1] - JARAK_PIPA_ATAS_BAWAH) - 5
-        };
-        
-        // Buat rectangle untuk tutup pipa bawah dengan margin 5 pixel
-        Rectangle lowerPipeCapRect = {
-            (float)TutupPipa[i][0] + 5,
-            (float)(Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH),
-            LEBAR_PIPA + 10,
-            20                              
-        };
-        
-        // Periksa apakah terjadi collision dengan pipa atau tutupnya
-        if (CheckCollisionRecs(birdRect, upperPipeRect) ||
-            CheckCollisionRecs(birdRect, upperPipeCapRect) ||
-            CheckCollisionRecs(birdRect, lowerPipeRect) ||
-            CheckCollisionRecs(birdRect, lowerPipeCapRect)) {
-            return true; // Collision terdeteksi
+        // Jika burung berada di area pipa secara horizontal
+        if (birdCenterX + birdRadius > pipeLeft && birdCenterX - birdRadius < pipeRight) {
+            // Longgarkan margin untuk pipa bawah
+            float topPipeBottom = Pipa[i][1] + 50; // Batas bawah pipa atas
+            float bottomPipeTop = Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH + 10; // Tambah offset 10px
+            
+            // Cek collision dengan pipa atas
+            if (birdCenterY - birdRadius < topPipeBottom) {
+                return true;
+            }
+            
+            // Cek collision dengan pipa bawah (dengan offset)
+            if (birdCenterY + birdRadius > bottomPipeTop) {
+                return true;
+            }
         }
     }
     
-    return false; // Tidak ada collision
+    return false;
 }
 
 // Fungsi untuk memeriksa collision antara burung dan tanah
 bool CheckBirdGroundCollision(Bird bird) {
-    // Posisi Y tanah sesuai dengan yang ada di file Pipa.c
-    const int GROUND_Y_POSITION = 450;
+    // Koordinat penting burung - bagian tengah burung dengan area kecil
+    float birdCenterX = bird.position.x + bird.texture.width/2;
+    float birdCenterY = bird.position.y + bird.texture.height/2;
+    float birdRadius = 10; // Radius sangat kecil, hanya 10 pixel
     
-    // Gunakan offset untuk hitbox burung yang lebih akurat
-    float birdBottomY = bird.position.y + bird.texture.height * 0.7f;
+    // Posisi Y tanah
+    const int GROUND_Y_POSITION = 420;
     
-    // Cek apakah bagian bawah burung menyentuh atau melewati tanah
-    if (birdBottomY >= GROUND_Y_POSITION - 5) {
-        return true; // Collision dengan tanah terdeteksi
+    // Cek apakah bagian bawah area collision burung menyentuh tanah
+    if (birdCenterY + birdRadius >= GROUND_Y_POSITION) {
+        return true;
     }
     
-    return false; // Tidak ada collision
+    return false;
 }
 
 // Fungsi untuk memperbarui status permainan berdasarkan collision
@@ -93,7 +73,10 @@ GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]
 
 // Fungsi untuk menampilkan layar game over
 void DrawGameOver(int screenWidth, int screenHeight, int score) {
+    // Gambar kotak transparan sebagai background
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, 180});
+    
+    // Tampilkan teks "GAME OVER"
     DrawText("GAME OVER", screenWidth / 2 - 120, screenHeight / 3, 40, RED);
     
     // Tampilkan petunjuk untuk restart
@@ -112,4 +95,25 @@ void ResetGame(Bird *bird, int Pipa[3][3], int TutupPipa[3][3]) {
     
     // Reset status game (ke status menunggu)
     gameOverState = GAME_READY;
+}
+
+// Fungsi untuk menampilkan hitbox (untuk debugging)
+void DrawHitboxes(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
+    // Gambar area collision burung
+    float birdCenterX = bird.position.x + bird.texture.width/2;
+    float birdCenterY = bird.position.y + bird.texture.height/2;
+    DrawCircleLines(birdCenterX, birdCenterY, 10, RED);
+    
+    // Gambar area collision pipa
+    for (int i = 0; i < 3; i++) {
+        // Pipa atas
+        DrawRectangleLines(Pipa[i][0], 0, LEBAR_PIPA, Pipa[i][1], GREEN);
+        
+        // Pipa bawah
+        DrawRectangleLines(Pipa[i][0], 
+                         Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH, 
+                         LEBAR_PIPA, 
+                         TINGGI_LAYAR - (Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH), 
+                         BLUE);
+    }
 }
