@@ -12,7 +12,7 @@ float bgX;
 //  Implementasi dari bird.c
 void InitBirds(Bird bird[], int count) {
     Image img = LoadImage("Flappy.png");
-    ImageResize(&img, img.width / 2, img.height / 2);
+    ImageResize(&img, img.width / 3, img.height / 3);
     
     for (int i = 0; i < count; i++) {
         bird[i].texture = LoadTextureFromImage(img);
