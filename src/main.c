@@ -9,7 +9,7 @@
 #include "zahra.h"
 
 int main() {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird - Combined Version");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
     SetTargetFPS(60);
     SetRandomSeed(time(NULL));
 
