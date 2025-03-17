@@ -20,4 +20,7 @@ GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]
 void DrawGameOver(int screenWidth, int screenHeight, int score);
 void ResetGame(Bird *bird, int Pipa[3][3], int TutupPipa[3][3]);
 
+// Fungsi debugging
+void DrawHitboxes(Bird bird, int Pipa[3][3], int TutupPipa[3][3]);
+
 #endif // ZAHRA_H
