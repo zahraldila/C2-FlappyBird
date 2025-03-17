@@ -113,6 +113,7 @@ int main() {
             }
             else if (gameOverState == GAME_ACTIVE) {
                 DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
+                DrawText("Press P to Pause", 10, 30, 20, DARKGRAY);
             }
             
             // Jika game over, tampilkan layar game over

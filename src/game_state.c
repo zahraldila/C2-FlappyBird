@@ -37,7 +37,7 @@ void HandleGameplayState(GameState *currentState, GameOverState *gameOverState, 
         if (IsKeyPressed(KEY_ENTER)) {
             *gameOverState = GAME_READY;
             ResetGame(bird, Pipa, TutupPipa);
-        } else if (IsKeyPressed(KEY_ESCAPE)) {
+        } else if (IsKeyPressed(KEY_BACKSPACE)) {
             *currentState = MENU;
             ResetGame(bird, Pipa, TutupPipa);
         }
