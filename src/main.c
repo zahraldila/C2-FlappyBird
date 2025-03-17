@@ -19,6 +19,11 @@ int main() {
 
     GameState currentState = MENU;
     GameOverState gameOverState = GAME_READY; // Status awal: menunggu input
+    PauseState tmblpause;
+    jedapause(&tmblpause);
+
+
+
 
     Bird birds[MAX_BIRDS];
     InitBirds(birds, MAX_BIRDS);
@@ -26,12 +31,22 @@ int main() {
     Buat_pipa(Pipa, TutupPipa);
     
     while (!WindowShouldClose()) {
-        // Update background position
-        bgX -= 0.5f;
-        if (bgX <= -SCREEN_WIDTH) {
-            bgX = 0;
-        }
 
+        if (IsKeyPressed(KEY_P))
+        {
+            tombolpause(&tmblpause);
+        }
+        
+        if (!tmblpause.isPause)
+        {
+            // Update background position
+            bgX -= 0.5f;
+            if (bgX <= -SCREEN_WIDTH) 
+            {
+                bgX = 0;
+            }
+        }
+        
         BeginDrawing();
         ClearBackground(SKYBLUE);
         
@@ -49,8 +64,11 @@ int main() {
                 Buat_pipa(Pipa, TutupPipa);
             }
         } 
-        else if (currentState == GAMEPLAY) {
-            // State GAME_READY - Menunggu input pemain untuk memulai
+        else if (currentState == GAMEPLAY) 
+        {
+            if(!tmblpause.isPause)
+            {
+                 // State GAME_READY - Menunggu input pemain untuk memulai
             if (gameOverState == GAME_READY) {
                 // Burung hanya mengambang di tempat
                 birds[0].position.y = SCREEN_HEIGHT / 2;
@@ -80,6 +98,8 @@ int main() {
                     ResetGame(&birds[0], Pipa, TutupPipa);
                 }
             }
+        }
+           
             
             // Gambar objek game
             DrawBirds(birds, MAX_BIRDS);
@@ -101,6 +121,11 @@ int main() {
             }
         }
 
+        if (tmblpause.isPause)
+        {
+            DrawPauseScreen(&tmblpause);
+        }
+        
         EndDrawing();
     }
     

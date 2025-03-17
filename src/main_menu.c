@@ -1,7 +1,8 @@
 #include "zakky.h"
 #include <stdlib.h>  // Tambahkan ini untuk exit()
 
-GameState DrawMenu(int screenWidth, int screenHeight) {
+GameState DrawMenu(int screenWidth, int screenHeight)
+{
     GameState state = MENU;
 
     DrawText("Flappy Bird", screenWidth / 2 - 100, 100, 40, DARKBLUE);
@@ -24,6 +25,24 @@ GameState DrawMenu(int screenWidth, int screenHeight) {
             exit(0);
         }
     }
-
     return state;
+}
+
+void jedapause (PauseState *tmblPause)
+{
+    tmblPause->isPause = false;
+}
+
+void tombolpause (PauseState *tmblPause)
+{
+    tmblPause->isPause = !tmblPause->isPause;
+}
+
+void DrawPauseScreen(PauseState *tmblPause)
+{
+    if (tmblPause->isPause)
+    {
+        DrawText("Game Pause , Tekan P untuk Meneruskan", 250, 250, 20, YELLOW);
+    }
+    
 }

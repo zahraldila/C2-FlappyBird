@@ -25,7 +25,7 @@ bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
         // Jika burung berada di area pipa secara horizontal
         if (birdCenterX + birdRadius > pipeLeft && birdCenterX - birdRadius < pipeRight) {
             // Longgarkan margin untuk pipa bawah
-            float topPipeBottom = Pipa[i][1] + 50; // Batas bawah pipa atas
+            float topPipeBottom = Pipa[i][1] + 30; // Batas bawah pipa atas
             float bottomPipeTop = Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH + 10; // Tambah offset 10px
             
             // Cek collision dengan pipa atas

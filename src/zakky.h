@@ -23,6 +23,15 @@ typedef enum {
     GAMEPLAY
 } GameState;
 
+typedef struct 
+{
+    bool isPause;
+}PauseState;
+
+void jedapause (PauseState *tmblPause);
+void tombolpause (PauseState *tmblPause);
+void DrawPauseScreen(PauseState *tmblPause);
+
 GameState DrawMenu(int screenWidth, int screenHeight);
 
 #endif // 
