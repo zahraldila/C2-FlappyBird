@@ -26,7 +26,7 @@ bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
         if (birdCenterX + birdRadius > pipeLeft && birdCenterX - birdRadius < pipeRight) {
             // Longgarkan margin untuk pipa bawah
             float topPipeBottom = Pipa[i][1] + 30; // Batas bawah pipa atas
-            float bottomPipeTop = Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH + 10; // Tambah offset 10px
+            float bottomPipeTop = Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH; // Tambah offset 10px
             
             // Cek collision dengan pipa atas
             if (birdCenterY - birdRadius < topPipeBottom) {
@@ -79,9 +79,14 @@ void DrawGameOver(int screenWidth, int screenHeight, int score) {
     // Tampilkan teks "GAME OVER"
     DrawText("GAME OVER", screenWidth / 2 - 120, screenHeight / 3, 40, RED);
     
+    // Tampilkan skor akhir
+    char scoreText[20];
+    sprintf(scoreText, "Score: %d", score);
+    DrawText(scoreText, screenWidth / 2 - 80, screenHeight / 2 - 20, 30, WHITE);
+    
     // Tampilkan petunjuk untuk restart
-    DrawText("Press ENTER to Restart", screenWidth / 2 - 150, screenHeight / 2 + 20, 20, WHITE);
-    DrawText("Press ESC to Menu", screenWidth / 2 - 120, screenHeight / 2 + 50, 20, WHITE);
+    DrawText("Press ENTER to Restart", screenWidth / 2 - 150, screenHeight / 2 + 30, 20, WHITE);
+    DrawText("Press ESC to Menu", screenWidth / 2 - 120, screenHeight / 2 + 60, 20, WHITE);
 }
 
 // Fungsi untuk me-reset game
