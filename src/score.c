@@ -7,22 +7,16 @@ int score = 0;
 int highscore = 0;
 
 void InitSkor() {
-    FILE *file = fopen("highscore.txt", "r");
-    if (file != NULL) {
-        fscanf(file, "%d", &highscore);
-        fclose(file);
-    } else {
-        highscore = 0;
-    }
+    // Baca highscore dari file
+    highscore = bacaHighScore();
     score = 0;
 }
 
 void TambahSkor() {
     score++;
+    // Perbarui highscore jika score lebih tinggi
     if (score > highscore) {
         highscore = score;
-        // Simpan highscore langsung
-        SimpanHighscore();
     }
 }
 
@@ -38,16 +32,10 @@ void SimpanHighscore() {
 }
 
 void simpanSkorKeFile(int skor) {
+    // Hanya simpan jika skor lebih tinggi dari highscore
     if (skor > highscore) {
-        FILE *file = fopen("highscore.txt", "w");
-        if (file != NULL) {
-            fprintf(file, "%d", skor);
-            fclose(file);
-            highscore = skor;
-            printf(">> HIGHSCORE BARU TERSIMPAN: %d\n", skor);
-        } else {
-            printf(">> ERROR: Tidak dapat menyimpan skor!\n");
-        }
+        highscore = skor;
+        SimpanHighscore();
     }
 }
 

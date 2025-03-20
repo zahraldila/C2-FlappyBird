@@ -8,7 +8,7 @@
 #include "alexandrio.h"
 #include "zahra.h"
 #include "qlio.h"
-#include "sound.h"  // Tambah sound
+#include "sound.h"  
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
@@ -127,10 +127,13 @@ int main() {
 
                             if (!passedPipe[i] && birdRightX > pipeRightX) {
                                 score++;
-                                TambahSkor();
                                 PlaySoundEffect(SOUND_SCORE);
-                                if (score > highscore) highscore = score;
                                 passedPipe[i] = true;
+                                
+                                // Cek highscore saat mendapatkan poin
+                                if (score > highscore) {
+                                    highscore = score;
+                                }
 
                                 printf(">> BURUNG LEWAT PIPA[%d] | SCORE: %d\n", i, score);
                             }
@@ -143,7 +146,11 @@ int main() {
                     }
                 } else { // GAME_OVER
                     if (!scoreSaved) {
-                        simpanSkorKeFile(score);
+                        // Simpan highscore kalau lebih tinggi dari sebelumnya
+                        if (score > highscore) {
+                            highscore = score;
+                            SimpanHighscore();
+                        }
                         scoreSaved = true;
                     }
 
@@ -193,7 +200,9 @@ int main() {
     }
 
     // Simpan highscore sebelum keluar
-    SimpanHighscore();
+    if (score > highscore) {
+        SimpanHighscore();
+    }
 
     // Unload dan cleanup
     UnloadBirds(birds, MAX_BIRDS);
