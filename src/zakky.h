@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "bird_struct.h"
+#define KECEPATAN_AWAN 1
 
 typedef struct {
     Vector2 position;
@@ -33,5 +34,11 @@ void tombolpause (PauseState *tmblPause);
 void DrawPauseScreen(PauseState *tmblPause);
 
 GameState DrawMenu(int screenWidth, int screenHeight);
+
+extern int Awan[3][2];
+
+void Buat_awan(int Awan[3][2]);
+void Pergerakan_awan(int Awan[3][2]);
+void Gambar_awan(int Awan[3][2]);
 
 #endif // 
