@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include "bird_struct.h"
-#define KECEPATAN_AWAN 0.5
+#define KECEPATAN_AWAN 1
 
 typedef struct {
     Vector2 position;
