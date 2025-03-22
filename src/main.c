@@ -180,6 +180,7 @@ int main() {
                 DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, DARKGRAY);
             } else if (gameOverState == GAME_ACTIVE) {
                 DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
+                DrawText("Press P to Pause", 10, 30, 20, DARKGRAY);
             }
 
             if (gameOverState == GAME_OVER) {
