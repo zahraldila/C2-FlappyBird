@@ -164,7 +164,7 @@ int main() {
                         score = 0;
                         scoreSaved = false;
                         for (int i = 0; i < 3; i++) passedPipe[i] = false;
-                    } else if (IsKeyPressed(KEY_ESCAPE)) {
+                    } else if (IsKeyPressed(KEY_BACKSPACE)) {
                         currentState = MENU;
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         score = 0;

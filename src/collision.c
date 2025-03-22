@@ -86,7 +86,7 @@ void DrawGameOver(int screenWidth, int screenHeight, int score) {
     
     // Tampilkan petunjuk untuk restart
     DrawText("Press ENTER to Restart", screenWidth / 2 - 150, screenHeight / 2 + 30, 20, WHITE);
-    DrawText("Press ESC to Menu", screenWidth / 2 - 120, screenHeight / 2 + 60, 20, WHITE);
+    DrawText("Press Backspace to Menu", screenWidth / 2 - 120, screenHeight / 2 + 60, 20, WHITE);
 }
 
 // Fungsi untuk me-reset game

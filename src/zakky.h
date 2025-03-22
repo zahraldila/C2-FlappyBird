@@ -27,6 +27,8 @@ typedef enum {
 typedef struct 
 {
     bool isPause;
+    bool hitungMundur;
+    float timer;
 }PauseState;
 
 void jedapause (PauseState *tmblPause);

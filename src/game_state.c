@@ -2,6 +2,7 @@
 #include "game_state.h"
 #include "dava.h"
 #include "zakky.h"
+#include <stdio.h>
 
 void HandleMenuState(GameState *currentState, GameOverState *gameOverState, Bird *bird, int Pipa[3][3], int TutupPipa[3][3]) {
     *gameOverState = GAME_READY;
@@ -37,7 +38,10 @@ void HandleGameplayState(GameState *currentState, GameOverState *gameOverState, 
         if (IsKeyPressed(KEY_ENTER)) {
             *gameOverState = GAME_READY;
             ResetGame(bird, Pipa, TutupPipa);
-        } else if (IsKeyPressed(KEY_BACKSPACE)) {
+        } 
+        else if (IsKeyPressed(KEY_BACKSPACE)) 
+        {
+            printf("BACKSPACE DITEKAN - Kembali ke Menu\n");
             *currentState = MENU;
             ResetGame(bird, Pipa, TutupPipa);
         }
