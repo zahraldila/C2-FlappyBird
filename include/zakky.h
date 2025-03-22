@@ -37,10 +37,10 @@ void DrawPauseScreen(PauseState *tmblPause);
 
 GameState DrawMenu(int screenWidth, int screenHeight);
 
-extern int Awan[3][2];
+extern int Awan[5][2];
 
-void Buat_awan(int Awan[3][2]);
-void Pergerakan_awan(int Awan[3][2]);
-void Gambar_awan(int Awan[3][2]);
+void Buat_awan(int Awan[5][2]);
+void Pergerakan_awan(int Awan[5][2]);
+void Gambar_awan(int Awan[5][2]);
 
 #endif // 
