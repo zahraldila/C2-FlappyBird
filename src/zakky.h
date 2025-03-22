@@ -3,21 +3,12 @@
 
 #include "raylib.h"
 #include "bird_struct.h"
-#define KECEPATAN_AWAN 0.5
-
-typedef struct {
-    Vector2 position;
-    float width;
-    float height;
-    Color color;
-} Pipe;
-
-
+#define KECEPATAN_AWAN 1
+ 
 extern float bgX;
 Bird CreateBird(float x, float y, const char *texturePath, float scale);
 void DrawBird(Bird bird);
 void UnloadBird(Bird *bird);
-
 
 typedef enum {
     MENU,

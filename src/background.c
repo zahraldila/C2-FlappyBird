@@ -1,6 +1,9 @@
 #include "Alexandrio.h"
 #include "zakky.h"
+#include "raylib.h"
 #include <stdlib.h>
+#include <stdio.h>
+
 
 int Awan[3][2]; // [x, y]
 void Buat_awan(int Awan[3][2]) 
@@ -16,17 +19,21 @@ void Buat_awan(int Awan[3][2])
 
 void Pergerakan_awan(int Awan[3][2]) 
 {
-    int i = 0;
-    while (i < 3)
+    for (int i = 0; i < 3; i++) 
     {
         Awan[i][0] -= KECEPATAN_AWAN; // Geser awan ke kiri
-        if (Awan[i][0] + 50 < 0) 
-        { // Jika awan keluar layar, pindahkan ke kanan
-            Awan[i][0] = LEBAR_LAYAR;
-            Awan[i][1] = rand() % 100;
+
+        // Jika awan sudah cukup keluar dari layar
+        if (Awan[i][0] < 0)  
+        {  
+            // Reset posisi x ke sisi kanan layar dengan jarak acak
+            Awan[i][0] = LEBAR_LAYAR + 20;
+            // Reset posisi y dengan variasi acak
+            Awan[i][1] = rand() % (TINGGI_LAYAR / 2);
+
+            printf("Awan %d direset ke posisi (%d, %d)\n", i, Awan[i][0], Awan[i][1]);
         }
-        i++;   
-    }   
+    }
 }
 
 void Gambar_awan(int Awan[3][2]) {

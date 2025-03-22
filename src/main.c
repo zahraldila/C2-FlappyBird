@@ -55,7 +55,6 @@ int main() {
         if (!tmblpause.isPause) 
         {
             // Background bergerak
-            Pergerakan_awan(Awan);
             bgX -= 0.5f;
             if (bgX <= -SCREEN_WIDTH) bgX = 0;
         }
@@ -103,6 +102,7 @@ int main() {
                     UpdateBirds(birds, MAX_BIRDS);
                     
                     // Update posisi pipa
+                    Pergerakan_awan(Awan);
                     Pergerakan_pipa(Pipa, TutupPipa);
                     
                     for (int i = 0; i < 3; i++) {
