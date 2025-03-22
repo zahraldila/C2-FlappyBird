@@ -1,6 +1,6 @@
 // score.c
 #include "qlio.h"
-#include "alexandrio.h"  // Tambahkan include ini untuk SCREEN_WIDTH
+#include "alexandrio.h"
 #include <stdio.h>
 
 int score = 0;
@@ -21,22 +21,31 @@ void TambahSkor() {
 }
 
 void SimpanHighscore() {
-    FILE *file = fopen("highscore.txt", "w");
-    if (file != NULL) {
-        fprintf(file, "%d", highscore);
-        fclose(file);
-        printf(">> HIGHSCORE TERSIMPAN: %d\n", highscore);
-    } else {
-        printf(">> ERROR: Tidak dapat menyimpan highscore!\n");
+    // Hanya simpan jika highscore saat ini berbeda dari yang ada di file
+    int fileHighscore = bacaHighScoreDariFileTanpaLog();
+    if (highscore > fileHighscore) {
+        FILE *file = fopen("highscore.txt", "w");
+        if (file != NULL) {
+            fprintf(file, "%d", highscore);
+            fclose(file);
+            printf(">> HIGHSCORE TERSIMPAN: %d\n", highscore);
+        } else {
+            printf(">> ERROR: Tidak dapat menyimpan highscore!\n");
+        }
     }
 }
 
-void simpanSkorKeFile(int skor) {
-    // Hanya simpan jika skor lebih tinggi dari highscore
-    if (skor > highscore) {
-        highscore = skor;
-        SimpanHighscore();
+// Fungsi tambahan untuk membaca highscore tanpa print log
+int bacaHighScoreDariFileTanpaLog() {
+    FILE *file = fopen("highscore.txt", "r");
+    int skor = 0;
+    
+    if (file != NULL) {
+        fscanf(file, "%d", &skor);
+        fclose(file);
     }
+    
+    return skor;
 }
 
 int bacaHighScore() {
