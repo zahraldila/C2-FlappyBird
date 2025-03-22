@@ -32,14 +32,12 @@ int main() {
     Buat_pipa(Pipa, TutupPipa);
 
     // === Sistem Skor ===
-    int score = 0;
-    int highscore = 0;
     bool scoreSaved = false;
     bool passedPipe[3] = { false };
 
+    // Inisialisasi sistem skor
     InitSkor();
-    highscore = bacaHighScore();
-
+    
     // === Inisialisasi Sound ===
     InitAudioDevice();
     InitSounds();
@@ -85,7 +83,7 @@ int main() {
                 birds[0].position.y = SCREEN_HEIGHT / 2;
                 birds[0].speed = 0;
                 Buat_pipa(Pipa, TutupPipa);
-                score = 0;
+                score = 0; // Gunakan variabel global dari qlio.h
                 scoreSaved = false;
                 for (int i = 0; i < 3; i++) passedPipe[i] = false;
             }
@@ -130,14 +128,10 @@ int main() {
                             float pipeRightX = Pipa[i][0] + LEBAR_PIPA;
 
                             if (!passedPipe[i] && birdRightX > pipeRightX) {
-                                score++;
+                                // Gunakan fungsi TambahSkor untuk menambah score dan update highscore
+                                TambahSkor();
                                 PlaySoundEffect(SOUND_SCORE);
                                 passedPipe[i] = true;
-                                
-                                // Cek highscore saat mendapatkan poin
-                                if (score > highscore) {
-                                    highscore = score;
-                                }
 
                                 printf(">> BURUNG LEWAT PIPA[%d] | SCORE: %d\n", i, score);
                             }
@@ -150,24 +144,21 @@ int main() {
                     }
                 } else { // GAME_OVER
                     if (!scoreSaved) {
-                        // Simpan highscore kalau lebih tinggi dari sebelumnya
-                        if (score > highscore) {
-                            highscore = score;
-                            SimpanHighscore();
-                        }
+                        // Simpan highscore hanya sekali saat game over
+                        SimpanHighscore();
                         scoreSaved = true;
                     }
 
                     if (IsKeyPressed(KEY_ENTER)) {
                         gameOverState = GAME_READY;
                         ResetGame(&birds[0], Pipa, TutupPipa);
-                        score = 0;
+                        ResetSkor(); // Gunakan fungsi reset skor
                         scoreSaved = false;
                         for (int i = 0; i < 3; i++) passedPipe[i] = false;
                     } else if (IsKeyPressed(KEY_BACKSPACE)) {
                         currentState = MENU;
                         ResetGame(&birds[0], Pipa, TutupPipa);
-                        score = 0;
+                        ResetSkor(); // Gunakan fungsi reset skor
                         scoreSaved = false;
                         for (int i = 0; i < 3; i++) passedPipe[i] = false;
                         
@@ -179,7 +170,7 @@ int main() {
 
             // Gambar game
             DrawBirds(birds, MAX_BIRDS);
-            Gambar_pipa(Pipa, TutupPipa);
+            Gambar_pipa(Pipa, TutupPipa, score);
 
             DrawText(TextFormat("Score: %d", score), SCREEN_WIDTH / 2 - 60, 10, 30, BLACK);
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
@@ -203,10 +194,8 @@ int main() {
         EndDrawing();
     }
 
-    // Simpan highscore sebelum keluar
-    if (score > highscore) {
-        SimpanHighscore();
-    }
+    // Simpan highscore sebelum keluar (jika perlu)
+    SimpanHighscore(); // Fungsi yang diperbarui hanya akan menyimpan jika nilai highscore berbeda
 
     // Unload dan cleanup
     UnloadBirds(birds, MAX_BIRDS);
