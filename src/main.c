@@ -175,7 +175,7 @@ int main() {
 
             // Gambar game
             DrawBirds(birds, MAX_BIRDS);
-            Gambar_pipa(Pipa, TutupPipa);
+            Gambar_pipa(Pipa, TutupPipa, score);
 
             DrawText(TextFormat("Score: %d", score), SCREEN_WIDTH / 2 - 60, 10, 30, BLACK);
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
