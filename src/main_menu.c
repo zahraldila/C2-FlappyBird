@@ -44,5 +44,4 @@ void DrawPauseScreen(PauseState *tmblPause)
     {
         DrawText("Game Pause\nTekan P untuk Meneruskan", 10, 50, 20, RED);
     }
-    
 }
