@@ -54,8 +54,10 @@ int main() {
 
         UpdateMusic();  // Update music stream
 
-        if (!tmblpause.isPause) {
+        if (!tmblpause.isPause) 
+        {
             // Background bergerak
+            Pergerakan_awan(Awan);
             bgX -= 0.5f;
             if (bgX <= -SCREEN_WIDTH) bgX = 0;
         }
@@ -63,6 +65,7 @@ int main() {
         BeginDrawing();
         ClearBackground(SKYBLUE);
         DrawBackground(cityBg, bgX);
+        Gambar_awan(Awan);
 
         if (currentState == MENU) {
             gameOverState = GAME_READY;
@@ -103,7 +106,6 @@ int main() {
                     
                     // Update posisi pipa
                     Pergerakan_pipa(Pipa, TutupPipa);
-                    Pergerakan_awan(Awan);
                     
                     for (int i = 0; i < 3; i++) {
                         if (Pipa[i][0] > LEBAR_LAYAR && passedPipe[i]) {
@@ -177,7 +179,6 @@ int main() {
 
             // Gambar game
             DrawBirds(birds, MAX_BIRDS);
-            Gambar_awan(Awan);
             Gambar_pipa(Pipa, TutupPipa);
 
             DrawText(TextFormat("Score: %d", score), SCREEN_WIDTH / 2 - 60, 10, 30, BLACK);
@@ -188,7 +189,6 @@ int main() {
                 DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, DARKGRAY);
             } else if (gameOverState == GAME_ACTIVE) {
                 DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
-                DrawText("Press P to Pause", 10, 30, 20, DARKGRAY);
             }
 
             if (gameOverState == GAME_OVER) {

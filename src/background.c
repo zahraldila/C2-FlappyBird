@@ -24,7 +24,8 @@ void Pergerakan_awan(int Awan[3][2])
         { // Jika awan keluar layar, pindahkan ke kanan
             Awan[i][0] = LEBAR_LAYAR;
             Awan[i][1] = rand() % 100;
-        }   
+        }
+        i++;   
     }   
 }
 
