@@ -13,6 +13,7 @@ void TampilkanSkor(Font font);
 void ResetSkor();
 
 int bacaHighScore();
+int bacaHighScoreDariFileTanpaLog();
 void simpanSkorKeFile(int skor);
 
 #endif
