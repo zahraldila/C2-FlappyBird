@@ -3,8 +3,9 @@
 
 void setupMenu(int screenWidth, int screenHeight) 
 {
-    // Gambar teks "Flappy Bird"
-    DrawText("Flappy Bird", screenWidth / 2 - 100, 100, 40, DARKBLUE);
+    GameState state = MENU;
+
+    DrawText("Flappy Bird", screenWidth / 2 - 170, 100, 60, DARKBLUE);
 
     // Gambar tombol "START"
     Rectangle startButton = { screenWidth / 2 - 100, 250, 200, 50 };
