@@ -9,7 +9,7 @@ void Buat_awan(int Awan[5][2])
     while (i < 5)
     {
         Awan[i][0] = LEBAR_LAYAR + (i * 200); // Awalnya di luar layar
-        Awan[i][1] = rand() % 100; // Posisi y acak di bagian atas layar
+        Awan[i][1] = rand() % 150; // Posisi y acak di bagian atas layar
         i++;
     }
 }
