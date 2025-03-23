@@ -85,15 +85,8 @@ void DrawGameOver(int screenWidth, int screenHeight, int score) {
     sprintf(scoreText, "Score: %d", score);
     DrawText(scoreText, screenWidth / 2 - 60, screenHeight / 2 - 20, 30, WHITE);
     
-    // Buat tombol Restart yang lebih menarik
-    Rectangle restartButton = { screenWidth / 2 - 100, screenHeight / 2 + 30, 200, 40 };
-    DrawRectangleRec(restartButton, GREEN);
-    DrawText("RESTART", screenWidth / 2 - 50, screenHeight / 2 + 40, 20, WHITE);
-    
-    // Buat tombol Back to Menu yang lebih menarik
-    Rectangle menuButton = { screenWidth / 2 - 100, screenHeight / 2 + 80, 200, 40 };
-    DrawRectangleRec(menuButton, BLUE);
-    DrawText("MAIN MENU", screenWidth / 2 - 60, screenHeight / 2 + 90, 20, WHITE);
+    DrawText("Press ENTER to restart", screenWidth / 2 - 120, screenHeight / 2 + 40, 20, WHITE);
+    DrawText("Press BACKSPACE for menu", screenWidth / 2 - 140, screenHeight / 2 + 70, 20, WHITE);
 }
 
 // Fungsi untuk me-reset game
