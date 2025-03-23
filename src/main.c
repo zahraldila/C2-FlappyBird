@@ -46,7 +46,8 @@ int main() {
     bool menuMusicStarted = false;
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) {
+        if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) 
+        {
             tombolpause(&tmblpause);
         }
 
