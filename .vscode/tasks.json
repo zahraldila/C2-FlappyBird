@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Flappy Bird",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-o", "game.exe",
+                "src/main.c",
+                "src/bird.c",
+                "src/Pipa.c",
+                "src/main_menu.c",
+                "src/collision.c",
+                "src/score.c",
+                "src/background.c",
+                "src/sound.c",
+                "-I", "./include",
+                "-I", "C:/raylib-5.5_win64_mingw-w64/include",
+                "-L", "C:/raylib-5.5_win64_mingw-w64/lib",
+                "-lraylib",
+                "-lopengl32",
+                "-lgdi32",
+                "-lwinmm"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
