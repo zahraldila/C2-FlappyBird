@@ -4,16 +4,8 @@
 #include "raylib.h"
 #include "bird_struct.h"
 #define KECEPATAN_AWAN 1
-
-typedef struct {
-    Vector2 position;
-    float width;
-    float height;
-    Color color;
-} Pipe;
-
-
 extern float bgX;
+
 Bird CreateBird(float x, float y, const char *texturePath, float scale);
 void DrawBird(Bird bird);
 void UnloadBird(Bird *bird);
@@ -35,6 +27,8 @@ void jedapause (PauseState *tmblPause);
 void tombolpause (PauseState *tmblPause);
 void DrawPauseScreen(PauseState *tmblPause);
 
+void setupMenu(int screenWidth, int screenHeight);
+GameState pilihMenu(int screenWidth, int screenHeight);
 GameState DrawMenu(int screenWidth, int screenHeight);
 
 extern int Awan[5][2];

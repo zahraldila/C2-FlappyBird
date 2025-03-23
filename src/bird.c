@@ -9,7 +9,35 @@
 
 float bgX;
 
-//  Implementasi dari bird.c
+// Zakky
+Bird CreateBird(float x, float y, const char *texturePath, float scale) 
+{
+    Bird bird;
+    bird.position = (Vector2){x, y};
+    bird.texture = LoadTexture(texturePath);
+    bird.scale = scale;
+    return bird;
+}
+
+// Zakky
+void DrawBirds(Bird bird[], int count) 
+{
+    for (int i = 0; i < count; i++) 
+    {
+        DrawTexture(bird[i].texture, (int)bird[i].position.x, (int)bird[i].position.y, WHITE);
+    }
+}
+
+// Zakky
+void UnloadBirds(Bird bird[], int count) 
+{
+    for (int i = 0; i < count; i++) 
+    {
+        UnloadTexture(bird[i].texture);
+    }
+}
+
+// Zakky & Dava
 void InitBirds(Bird bird[], int count) {
     Image img = LoadImage("Flappy.png");
     ImageResize(&img, img.width / 3, img.height / 3);
@@ -19,10 +47,10 @@ void InitBirds(Bird bird[], int count) {
         bird[i].position = (Vector2){0, 200};
         bird[i].speed = 0;
     }
-    
     UnloadImage(img);
 }
 
+// Dava
 void UpdateBirds(Bird bird[], int count) {
     for (int i = 0; i < count; i++) {
         bird[i].speed += GRAVITY;  // Tambahkan gravitasi
@@ -45,27 +73,6 @@ void UpdateBirds(Bird bird[], int count) {
             bird[i].speed = 0;
         }
     }
-}
-
-void DrawBirds(Bird bird[], int count) {
-    for (int i = 0; i < count; i++) {
-        DrawTexture(bird[i].texture, (int)bird[i].position.x, (int)bird[i].position.y, WHITE);
-    }
-}
-
-void UnloadBirds(Bird bird[], int count) {
-    for (int i = 0; i < count; i++) {
-        UnloadTexture(bird[i].texture);
-    }
-}
-
-// Implementasi dari zakky.h
-Bird CreateBird(float x, float y, const char *texturePath, float scale) {
-    Bird bird;
-    bird.position = (Vector2){x, y};
-    bird.texture = LoadTexture(texturePath);
-    bird.scale = scale;
-    return bird;
 }
 
 void UnloadBird(Bird *bird) {
