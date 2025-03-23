@@ -5,7 +5,7 @@ GameState DrawMenu(int screenWidth, int screenHeight)
 {
     GameState state = MENU;
 
-    DrawText("Flappy Bird", screenWidth / 2 - 100, 100, 40, DARKBLUE);
+    DrawText("Flappy Bird", screenWidth / 2 - 170, 100, 60, DARKBLUE);
 
     Rectangle startButton = { screenWidth / 2 - 100, 250, 200, 50 };
     DrawRectangleRec(startButton, GREEN);
