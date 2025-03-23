@@ -12,6 +12,9 @@
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
+    Image icon = LoadImage("icon.png");
+    SetWindowIcon(icon);
+    UnloadImage(icon);
     SetTargetFPS(60);
     SetRandomSeed(time(NULL));
 
@@ -46,7 +49,8 @@ int main() {
     bool menuMusicStarted = false;
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) {
+        if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) 
+        {
             tombolpause(&tmblpause);
         }
 
@@ -149,6 +153,35 @@ int main() {
                         Pipa_berhenti(false);
                         scoreSaved = true;
                     }
+                    
+                    // Definisikan area tombol restart dan menu
+                    Rectangle restartButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 30, 200, 40 };
+                    Rectangle menuButton = { SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 80, 200, 40 };
+                    
+                    // Periksa klik mouse pada tombol
+                    Vector2 mousePoint = GetMousePosition();
+                    
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        if (CheckCollisionPointRec(mousePoint, restartButton)) {
+                            // Tombol restart diklik
+                            gameOverState = GAME_READY;
+                            ResetGame(&birds[0], Pipa, TutupPipa);
+                            ResetSkor(); // Gunakan fungsi reset skor
+                            scoreSaved = false;
+                            for (int i = 0; i < 3; i++) passedPipe[i] = false;
+                        }
+                        else if (CheckCollisionPointRec(mousePoint, menuButton)) {
+                            // Tombol menu diklik
+                            currentState = MENU;
+                            ResetGame(&birds[0], Pipa, TutupPipa);
+                            ResetSkor(); // Gunakan fungsi reset skor
+                            scoreSaved = false;
+                            for (int i = 0; i < 3; i++) passedPipe[i] = false;
+                            
+                            // Jangan memulai musik menu di sini, biarkan flag menanganinya
+                            menuMusicStarted = false;
+                        }
+                    }
 
                     if (IsKeyPressed(KEY_ENTER)) {
                         gameOverState = GAME_READY;
@@ -179,8 +212,8 @@ int main() {
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
 
             if (gameOverState == GAME_READY) {
-                DrawText("GET READY!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 30, 40, DARKGRAY);
-                DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, DARKGRAY);
+                DrawText("GET READY!", SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 - 30, 40, LIME);
+                DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, LIME);
             } else if (gameOverState == GAME_ACTIVE) {
                 DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
                 DrawText("Press P to Pause", 10, 30, 20, DARKGRAY);

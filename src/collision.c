@@ -72,6 +72,7 @@ GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]
 }
 
 // Fungsi untuk menampilkan layar game over
+// Fungsi untuk menampilkan layar game over
 void DrawGameOver(int screenWidth, int screenHeight, int score) {
     // Gambar kotak transparan sebagai background
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, 180});
@@ -82,11 +83,17 @@ void DrawGameOver(int screenWidth, int screenHeight, int score) {
     // Tampilkan skor akhir
     char scoreText[20];
     sprintf(scoreText, "Score: %d", score);
-    DrawText(scoreText, screenWidth / 2 - 70, screenHeight / 2 - 20, 30, WHITE);
+    DrawText(scoreText, screenWidth / 2 - 60, screenHeight / 2 - 20, 30, WHITE);
     
-    // Tampilkan petunjuk untuk restart
-    DrawText("Press ENTER to Restart", screenWidth / 2 - 125, screenHeight / 2 + 30, 20, WHITE);
-    DrawText("Press Backspace to Menu", screenWidth / 2 - 130, screenHeight / 2 + 60, 20, WHITE);
+    // Buat tombol Restart yang lebih menarik
+    Rectangle restartButton = { screenWidth / 2 - 100, screenHeight / 2 + 30, 200, 40 };
+    DrawRectangleRec(restartButton, GREEN);
+    DrawText("RESTART", screenWidth / 2 - 50, screenHeight / 2 + 40, 20, WHITE);
+    
+    // Buat tombol Back to Menu yang lebih menarik
+    Rectangle menuButton = { screenWidth / 2 - 100, screenHeight / 2 + 80, 200, 40 };
+    DrawRectangleRec(menuButton, BLUE);
+    DrawText("MAIN MENU", screenWidth / 2 - 60, screenHeight / 2 + 90, 20, WHITE);
 }
 
 // Fungsi untuk me-reset game

@@ -55,7 +55,7 @@ void RenderGameState(GameState currentState, GameOverState gameOverState, Bird *
     
     // Pesan bantuan sesuai dengan status game
     if (gameOverState == GAME_READY) {
-        DrawText("GET READY!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 30, 40, DARKGRAY);
+       // DrawText("GET READY!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 30, 40, DARKGRAY);
         DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, DARKGRAY);
     }
     else if (gameOverState == GAME_ACTIVE) {
