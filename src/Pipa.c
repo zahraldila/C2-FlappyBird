@@ -42,7 +42,7 @@ void Pergerakan_pipa(int Pipa[3][3], int TutupPipa[3][3]){
 
 void Gambar_pipa(int Pipa[3][3], int TutupPipa[3][3], int s){
     for(int i = 0; i < 3; i++){
-            if(s > 0 && Stop){
+            if(s > 14 && Stop){
                 Pipa_naik_turun(i);
             }    
             Munculkan_Pipa(i);
