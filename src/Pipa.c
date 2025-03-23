@@ -3,10 +3,12 @@
 #include "qlio.h"
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};
 int Pipa[3][3], TutupPipa[3][3], Gerak[3];
+bool Stop = true;
 
 void Buat_pipa(int Pipa[3][3], int TutupPipa[3][3]){
     for(int i = 0; i < 3; i++){
@@ -40,7 +42,7 @@ void Pergerakan_pipa(int Pipa[3][3], int TutupPipa[3][3]){
 
 void Gambar_pipa(int Pipa[3][3], int TutupPipa[3][3], int s){
     for(int i = 0; i < 3; i++){
-            if(s > 14){
+            if(s > 0 && Stop){
                 Pipa_naik_turun(i);
             }    
             Munculkan_Pipa(i);
@@ -70,7 +72,9 @@ void Munculkan_Pipa(int i){
         DrawRectangle(0, 420, LEBAR_LAYAR, 100, TANAH);
         DrawRectangle(0, 420, LEBAR_LAYAR, 10, RUMPUT);
     }
-
 }
 
+void Pipa_berhenti(bool Cek){
+    Stop = Cek;
+}
 

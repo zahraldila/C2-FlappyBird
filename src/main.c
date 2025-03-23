@@ -146,11 +146,13 @@ int main() {
                     if (!scoreSaved) {
                         // Simpan highscore hanya sekali saat game over
                         SimpanHighscore();
+                        Pipa_berhenti(false);
                         scoreSaved = true;
                     }
 
                     if (IsKeyPressed(KEY_ENTER)) {
                         gameOverState = GAME_READY;
+                        Pipa_berhenti(true);
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         ResetSkor(); // Gunakan fungsi reset skor
                         scoreSaved = false;
@@ -159,6 +161,7 @@ int main() {
                         currentState = MENU;
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         ResetSkor(); // Gunakan fungsi reset skor
+                        Pipa_berhenti(true);
                         scoreSaved = false;
                         for (int i = 0; i < 3; i++) passedPipe[i] = false;
                         

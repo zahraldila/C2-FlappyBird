@@ -24,6 +24,7 @@ void Pergerakan_pipa(int Pipa[3][3], int TutupPipa[3][3]);
 void Gambar_pipa(int Pipa[3][3], int TutupPipa[3][3], int s);
 void Pipa_naik_turun(int i);
 void Munculkan_Pipa(int i);
+void Pipa_berhenti(bool Cek);
 
 
 #endif //ALEXANDRIO_H
