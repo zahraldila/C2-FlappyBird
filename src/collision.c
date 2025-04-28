@@ -48,10 +48,10 @@ bool CheckBirdGroundCollision(Bird bird) {
     // Koordinat penting burung - bagian tengah burung dengan area kecil
     float birdCenterX = bird.position.x + bird.texture.width/2;
     float birdCenterY = bird.position.y + bird.texture.height/2;
-    float birdRadius = 10; // Radius sangat kecil, hanya 10 pixel
+    float birdRadius = 5;
     
     // Posisi Y tanah
-    const int GROUND_Y_POSITION = 420;
+    const int GROUND_Y_POSITION = 425;
     
     // Cek apakah bagian bawah area collision burung menyentuh tanah
     if (birdCenterY + birdRadius >= GROUND_Y_POSITION) {
@@ -72,6 +72,7 @@ GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]
 }
 
 // Fungsi untuk menampilkan layar game over
+// Fungsi untuk menampilkan layar game over
 void DrawGameOver(int screenWidth, int screenHeight, int score) {
     // Gambar kotak transparan sebagai background
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, 180});
@@ -82,11 +83,10 @@ void DrawGameOver(int screenWidth, int screenHeight, int score) {
     // Tampilkan skor akhir
     char scoreText[20];
     sprintf(scoreText, "Score: %d", score);
-    DrawText(scoreText, screenWidth / 2 - 80, screenHeight / 2 - 20, 30, WHITE);
+    DrawText(scoreText, screenWidth / 2 - 60, screenHeight / 2 - 20, 30, WHITE);
     
-    // Tampilkan petunjuk untuk restart
-    DrawText("Press ENTER to Restart", screenWidth / 2 - 150, screenHeight / 2 + 30, 20, WHITE);
-    DrawText("Press Backspace to Menu", screenWidth / 2 - 120, screenHeight / 2 + 60, 20, WHITE);
+    DrawText("Press ENTER to restart", screenWidth / 2 - 120, screenHeight / 2 + 40, 20, WHITE);
+    DrawText("Press BACKSPACE for menu", screenWidth / 2 - 140, screenHeight / 2 + 70, 20, WHITE);
 }
 
 // Fungsi untuk me-reset game

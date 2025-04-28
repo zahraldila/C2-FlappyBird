@@ -12,6 +12,9 @@
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
+    Image icon = LoadImage("icon.png");
+    SetWindowIcon(icon);
+    UnloadImage(icon);
     SetTargetFPS(60);
     SetRandomSeed(time(NULL));
 
@@ -46,7 +49,8 @@ int main() {
     bool menuMusicStarted = false;
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) {
+        if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) 
+        {
             tombolpause(&tmblpause);
         }
 
@@ -73,7 +77,7 @@ int main() {
                 menuMusicStarted = true;
             }
             
-            currentState = DrawMenu(SCREEN_WIDTH, SCREEN_HEIGHT);
+            currentState = DrawMenu();
 
             if (currentState == GAMEPLAY) {
                 StopMenuMusic(); // Stop musik saat masuk gameplay
@@ -146,11 +150,13 @@ int main() {
                     if (!scoreSaved) {
                         // Simpan highscore hanya sekali saat game over
                         SimpanHighscore();
+                        Pipa_berhenti(false);
                         scoreSaved = true;
                     }
-
+                    
                     if (IsKeyPressed(KEY_ENTER)) {
                         gameOverState = GAME_READY;
+                        Pipa_berhenti(true);
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         ResetSkor(); // Gunakan fungsi reset skor
                         scoreSaved = false;
@@ -159,6 +165,7 @@ int main() {
                         currentState = MENU;
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         ResetSkor(); // Gunakan fungsi reset skor
+                        Pipa_berhenti(true);
                         scoreSaved = false;
                         for (int i = 0; i < 3; i++) passedPipe[i] = false;
                         
@@ -176,10 +183,11 @@ int main() {
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
 
             if (gameOverState == GAME_READY) {
-                DrawText("GET READY!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 30, 40, DARKGRAY);
-                DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, DARKGRAY);
+                DrawText("GET READY!", SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 - 30, 40, LIME);
+                DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, LIME);
             } else if (gameOverState == GAME_ACTIVE) {
                 DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
+                DrawText("Press P to Pause", 10, 30, 20, DARKGRAY);
             }
 
             if (gameOverState == GAME_OVER) {
@@ -199,7 +207,6 @@ int main() {
 
     // Unload dan cleanup
     UnloadBirds(birds, MAX_BIRDS);
-    UnloadBird(&bird);
     UnloadTexture(cityBg);
     UnloadSounds();
     CloseAudioDevice();
