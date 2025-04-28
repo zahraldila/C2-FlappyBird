@@ -78,7 +78,7 @@ int main() {
                 menuMusicStarted = true;
             }
             
-            currentState = DrawMenu(SCREEN_WIDTH, SCREEN_HEIGHT);
+            currentState = DrawMenu();
 
             if (currentState == GAMEPLAY) {
                 StopMenuMusic(); // Stop musik saat masuk gameplay
@@ -207,7 +207,6 @@ int main() {
 
     // Unload dan cleanup
     UnloadBirds(birds, MAX_BIRDS);
-    UnloadBird(&bird);
     UnloadTexture(cityBg);
     UnloadSounds();
     CloseAudioDevice();

@@ -1,24 +1,24 @@
 #include "zakky.h"
 #include <stdlib.h>  // Tambahkan ini untuk exit()
 
-void setupMenu(int screenWidth, int screenHeight) 
+void setupMenu() 
 {
     GameState state = MENU;
 
-    DrawText("Flappy Bird", screenWidth / 2 - 170, 100, 60, DARKBLUE);
+    DrawText("Flappy Bird", LEBAR_LAYAR / 2 - 170, 100, 60, DARKBLUE);
 
     // Gambar tombol "START"
-    Rectangle startButton = { screenWidth / 2 - 100, 250, 200, 50 };
+    Rectangle startButton = { LEBAR_LAYAR / 2 - 100, 250, 200, 50 };
     DrawRectangleRec(startButton, GREEN);
-    DrawText("START", screenWidth / 2 - 40, 265, 20, WHITE);
-
+    DrawText("START", LEBAR_LAYAR / 2 - 40, 265, 20, WHITE);
+ 
     // Gambar tombol "EXIT"
-    Rectangle exitButton = { screenWidth / 2 - 100, 320, 200, 50 };
+    Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 320, 200, 50 };
     DrawRectangleRec(exitButton, RED);
-    DrawText("EXIT", screenWidth / 2 - 30, 335, 20, WHITE);
+    DrawText("EXIT", LEBAR_LAYAR / 2 - 30, 335, 20, WHITE);
 }
-
-GameState pilihMenu(int screenWidth, int screenHeight) 
+ 
+GameState pilihMenu() 
 {
     GameState state = MENU;
 
@@ -26,8 +26,8 @@ GameState pilihMenu(int screenWidth, int screenHeight)
     Vector2 mousePoint = GetMousePosition();
 
     // Definisikan area tombol
-    Rectangle startButton = { screenWidth / 2 - 100, 250, 200, 50 };
-    Rectangle exitButton = { screenWidth / 2 - 100, 320, 200, 50 };
+    Rectangle startButton = { LEBAR_LAYAR / 2 - 100, 250, 200, 50 };
+    Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 320, 200, 50 };
 
     // Periksa input mouse
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -42,12 +42,13 @@ GameState pilihMenu(int screenWidth, int screenHeight)
     return state;
 }
 
-GameState DrawMenu(int screenWidth, int screenHeight) {
+GameState DrawMenu() 
+{
     // Gambar UI menu
-    setupMenu(screenWidth, screenHeight);
+    setupMenu();
 
     // Handle input dan kembalikan state yang sesuai
-    return pilihMenu(screenWidth, screenHeight);
+    return pilihMenu();
 }
 
 void jedapause (PauseState *tmblPause)
