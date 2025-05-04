@@ -1,93 +1,91 @@
-// File: bird.c
+//bird.c
 #include "raylib.h"
 #include "dava.h"
-#include "zakky.h"
-#include "bird_struct.h"
 #include <stdlib.h>
 #include <time.h>
 
-
 float bgX;
 
-// Zakky
-Bird CreateBird(float x, float y, const char *texturePath, float scale) 
-{
-    Bird bird;
-    bird.position = (Vector2){x, y};
-    bird.texture = LoadTexture(texturePath);
-    bird.scale = scale;
-    return bird;
-}
-
-// Zakky
-void DrawBirds(Bird bird[], int count) 
-{
-    for (int i = 0; i < count; i++) 
-    {
-        DrawTexture(bird[i].texture, (int)bird[i].position.x, (int)bird[i].position.y, WHITE);
-    }
-}
-
-// Zakky
-void UnloadBirds(Bird bird[], int count) 
-{
-    for (int i = 0; i < count; i++) 
-    {
-        UnloadTexture(bird[i].texture);
-    }
-}
-
-// Zakky & Dava
-void InitBirds(Bird bird[], int count) {
+// Buat satu node burung dan return head-nya
+BirdNode* InitBirdsLinkedList(int count) {
     Image img = LoadImage("Flappy.png");
     ImageResize(&img, img.width / 3, img.height / 3);
-    
+
+    BirdNode *head = NULL;
+    BirdNode *tail = NULL;
+
     for (int i = 0; i < count; i++) {
-        bird[i].texture = LoadTextureFromImage(img);
-        bird[i].position = (Vector2){0, 200};
-        bird[i].speed = 0;
+        BirdNode *newNode = (BirdNode *)malloc(sizeof(BirdNode));
+        newNode->bird.texture = LoadTextureFromImage(img);
+        newNode->bird.position = (Vector2){0, 200};
+        newNode->bird.speed = 0;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
     }
+
     UnloadImage(img);
+    return head;
 }
 
-// Dava
-void UpdateBirds(Bird bird[], int count) {
-    for (int i = 0; i < count; i++) {
-        bird[i].speed += GRAVITY;  // Tambahkan gravitasi
+void UpdateBirds(BirdNode *head) {
+    BirdNode *current = head;
+    while (current != NULL) {
+        current->bird.speed += GRAVITY;
 
         if (IsKeyPressed(KEY_SPACE)) {
-            bird[i].speed = FLAP_STRENGTH;
-        }        
-
-        bird[i].position.y += bird[i].speed;  // Perbarui posisi burung
-
-        // Cegah burung jatuh ke tanah
-        if (bird[i].position.y > 385) {
-            bird[i].position.y = 385;
-            bird[i].speed = 0;
+            current->bird.speed = FLAP_STRENGTH;
         }
 
-        // Cegah burung terbang di luar layar atas
-        if (bird[i].position.y < -15) {
-            bird[i].position.y = -15;
-            bird[i].speed = 0;
+        current->bird.position.y += current->bird.speed;
+
+        if (current->bird.position.y > 385) {
+            current->bird.position.y = 385;
+            current->bird.speed = 0;
         }
+
+        if (current->bird.position.y < -15) {
+            current->bird.position.y = -15;
+            current->bird.speed = 0;
+        }
+
+        current = current->next;
     }
 }
 
-void UnloadBird(Bird *bird) {
-    UnloadTexture(bird->texture);
+void DrawBirds(BirdNode *head) {
+    BirdNode *current = head;
+    while (current != NULL) {
+        DrawTexture(current->bird.texture, (int)current->bird.position.x, (int)current->bird.position.y, WHITE);
+        current = current->next;
+    }
 }
 
+void UnloadBirds(BirdNode *head) {
+    BirdNode *current = head;
+    while (current != NULL) {
+        UnloadTexture(current->bird.texture);
+        BirdNode *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
 
+// Background tetap pakai float
 void InitBackground(Texture2D *bg) {
-    *bg = LoadTexture("city.png"); // Load gambar kota
+    *bg = LoadTexture("city.png");
 }
 
 void UpdateBackground(float *bgX) {
-    *bgX -= 0.5f; // Background bergerak lambat
+    *bgX -= 0.5f;
     if (*bgX <= -LEBAR_LAYAR) {
-        *bgX = 0; // Reset posisi jika keluar layar
+        *bgX = 0;
     }
 }
 
