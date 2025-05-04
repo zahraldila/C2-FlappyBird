@@ -12,5 +12,10 @@ typedef struct {
     Texture2D texture;
 } Bird;
 
+// Untuk linked list burung
+typedef struct BirdNode {
+    Bird bird;
+    struct BirdNode *next;
+} BirdNode;
 
 #endif
