@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "bird_struct.h"
 #define KECEPATAN_AWAN 1
+#define JUMLAH_AWAN 5
 extern float bgX;
 
 Bird CreateBird(float x, float y, const char *texturePath, float scale);
@@ -26,10 +27,22 @@ void setupMenu();
 GameState pilihMenu();
 GameState DrawMenu();
  
-extern int Awan[5][2];
+typedef struct AwanNode {
+    float x;
+    float y;
+    struct AwanNode *next;
+} AwanNode;
 
-void Buat_awan(int Awan[5][2]);
-void Pergerakan_awan(int Awan[5][2]);
-void Gambar_awan(int Awan[5][2]);
+AwanNode* createAwan (float x, float y);
+void insertAwan(AwanNode **head, float x, float y);
+void updateAwan(AwanNode *head);
+void gambarAwan(AwanNode *head);
+void freeAwan(AwanNode **head);
+
+
+
+
+
+
 
 #endif // 

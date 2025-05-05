@@ -31,7 +31,6 @@ int main() {
     InitBirds(birds, MAX_BIRDS);
     Bird bird = CreateBird(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2, "Flappy.png", 0.8f); // posisi burung agak kanan
 
-    Buat_awan(Awan);
     Buat_pipa(Pipa, TutupPipa);
 
     // === Sistem Skor ===
@@ -47,7 +46,16 @@ int main() {
     
     // Flag untuk mengelola menu music
     bool menuMusicStarted = false;
-
+    
+    //inisialisasi awan
+    AwanNode *awanList = NULL;
+    for (int j = 0; j < JUMLAH_AWAN; j++)
+    {
+        float x = SCREEN_WIDTH + j * 200;
+        float y = rand() % 150;
+        insertAwan(&awanList, x, y);
+    }
+    
     while (!WindowShouldClose()) {
         if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) 
         {
@@ -61,12 +69,14 @@ int main() {
             // Background bergerak
             bgX -= 0.5f;
             if (bgX <= -SCREEN_WIDTH) bgX = 0;
+
+            updateAwan(awanList);
         }
 
         BeginDrawing();
         ClearBackground(SKYBLUE);
         DrawBackground(cityBg, bgX);
-        Gambar_awan(Awan);
+        gambarAwan(awanList);
 
         if (currentState == MENU) {
             gameOverState = GAME_READY;
@@ -106,7 +116,6 @@ int main() {
                     UpdateBirds(birds, MAX_BIRDS);
                     
                     // Update posisi pipa
-                    Pergerakan_awan(Awan);
                     Pergerakan_pipa(Pipa, TutupPipa);
                     
                     for (int i = 0; i < 3; i++) {
@@ -210,6 +219,8 @@ int main() {
     UnloadTexture(cityBg);
     UnloadSounds();
     CloseAudioDevice();
+
+    freeAwan(&awanList);
     CloseWindow();
 
     return 0;
