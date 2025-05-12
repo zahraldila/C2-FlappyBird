@@ -78,7 +78,8 @@ int main() {
         DrawBackground(cityBg, bgX);
         gambarAwan(awanList);
 
-        if (currentState == MENU) {
+        if (currentState == MENU) 
+        {
             gameOverState = GAME_READY;
             
             // Hanya memulai musik menu sekali ketika memasuki state menu
@@ -100,7 +101,33 @@ int main() {
                 scoreSaved = false;
                 for (int i = 0; i < 3; i++) passedPipe[i] = false;
             }
-        } else if (currentState == GAMEPLAY) {
+        }
+        else if (currentState == BACKGROUND)
+        {
+            // Panggil fungsi tampilan dan logika pemilihan background
+            // Misalnya: DrawBackgroundSelection();
+            // Setelah selesai memilih, kembali ke menu
+            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
+            currentState = MENU;
+        }
+
+        else if (currentState == SKIN)
+        {
+            // Panggil fungsi tampilan dan logika pemilihan skin
+            // Setelah selesai memilih, kembali ke menu
+            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
+            currentState = MENU;
+        }
+
+        else if (currentState == LEADERBOARD)
+        {
+            // Panggil fungsi tampilan dan logika untuk score
+            // Setelah selesai memilih, kembali ke menu
+            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
+            currentState = MENU;
+        }
+        else if (currentState == GAMEPLAY) 
+        {
             if (!tmblpause.isPause) {
                 if (gameOverState == GAME_READY) {
                     birds[0].position.y = SCREEN_HEIGHT / 2;

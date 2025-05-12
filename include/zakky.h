@@ -11,7 +11,11 @@ Bird CreateBird(float x, float y, const char *texturePath, float scale);
 
 typedef enum {
     MENU,
-    GAMEPLAY
+    GAMEPLAY,
+    BACKGROUND,
+    SKIN,
+    LEADERBOARD,
+    CREDIT
 } GameState;
 
 typedef struct 

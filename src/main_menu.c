@@ -40,13 +40,34 @@ GameState pilihMenu()
     // Definisikan area tombol
     Rectangle startButton = { LEBAR_LAYAR / 3 - 100, 250, 200, 50 };
     Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 200, 50 };
+    Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
+    Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
+    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
 
     // Periksa input mouse
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mousePoint, startButton)) {
+        if (CheckCollisionPointRec(mousePoint, startButton)) 
+        {
             state = GAMEPLAY;
         }
-        if (CheckCollisionPointRec(mousePoint, exitButton)) {
+
+        if (CheckCollisionPointRec(mousePoint,scoreButton )) 
+        {
+            state = LEADERBOARD;
+        }
+
+        if (CheckCollisionPointRec(mousePoint,bckButton )) 
+        {
+            state = BACKGROUND;
+        }
+
+        if (CheckCollisionPointRec(mousePoint,skinButton)) 
+        {
+            state = SKIN;
+        }
+
+        if (CheckCollisionPointRec(mousePoint, exitButton)) 
+        {
             CloseWindow();
             exit(0);
         }
