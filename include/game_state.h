@@ -6,9 +6,12 @@
 #include "bird_struct.h"
 #include "alexandrio.h"
 #include "zahra.h"
+#include "zakky.h"     // Untuk fungsi UpdateBird dan struktur pipa
+#include "dava.h"      // Untuk Gambar_pipa dan pergerakan pipa
 
-void HandleMenuState(GameState *currentState, GameOverState *gameOverState, Bird *bird, int Pipa[3][3], int TutupPipa[3][3]);
-void HandleGameplayState(GameState *currentState, GameOverState *gameOverState, Bird *bird, int Pipa[3][3], int TutupPipa[3][3]);
-void RenderGameState(GameState currentState, GameOverState gameOverState, Bird *birds, int Pipa[3][3], int TutupPipa[3][3]);
+void HandleMenuState(GameState *currentState, GameOverState *gameOverState, Bird *bird, Singlelinkedlist *plist, Singlelinkedlist *tplist);
+void HandleGameplayState(GameState *currentState, GameOverState *gameOverState, Bird *bird, Singlelinkedlist *plist, Singlelinkedlist *tplist);
+void RenderGameState(GameState currentState, GameOverState gameOverState, Bird *bird, Singlelinkedlist *plist, Singlelinkedlist *tplist);
+void ResetGame(Bird *bird, Singlelinkedlist *plist, Singlelinkedlist *tplist); 
 
 #endif

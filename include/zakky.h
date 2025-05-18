@@ -44,9 +44,4 @@ void gambarAwan(AwanNode *head);
 void freeAwan(AwanNode **head);
 
 
-
-
-
-
-
 #endif // 

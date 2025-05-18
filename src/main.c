@@ -1,6 +1,7 @@
 // File: main.c
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <time.h>
 #include "raylib.h"
 #include "dava.h"
@@ -9,7 +10,14 @@
 #include "alexandrio.h"
 #include "zahra.h"
 #include "qlio.h"
-#include "sound.h"  
+#include "sound.h"
+#include "game_state.h"
+#include "pipa_ll.h"  // untuk Buat_pipa_linkedlist, ResetList, freeList
+
+
+// Deklarasi global list pipa
+Singlelinkedlist *plist;
+Singlelinkedlist *tplist;
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
@@ -19,7 +27,6 @@ int main() {
     SetTargetFPS(60);
     SetRandomSeed(time(NULL));
 
-    // Background
     bgX = 0;
     Texture2D cityBg = LoadTexture("city.png");
 
@@ -28,48 +35,39 @@ int main() {
     PauseState tmblpause;
     jedapause(&tmblpause);
 
-    Bird birds[MAX_BIRDS];
-    Buat_pipa(Pipa, TutupPipa);
-
     BirdNode *myBird = InitBird();
 
-    // === Sistem Skor ===
     bool scoreSaved = false;
     bool passedPipe[3] = { false };
-
-    // Inisialisasi sistem skor
     InitSkor();
-    
-    // === Inisialisasi Sound ===
+
     InitAudioDevice();
     InitSounds();
-    
-    // Flag untuk mengelola menu music
     bool menuMusicStarted = false;
-    
-    //inisialisasi awan
+
     AwanNode *awanList = NULL;
-    for (int j = 0; j < JUMLAH_AWAN; j++)
-    {
+    for (int j = 0; j < JUMLAH_AWAN; j++) {
         float x = SCREEN_WIDTH + j * 200;
         float y = rand() % 150;
         insertAwan(&awanList, x, y);
     }
-    
+
+    plist = malloc(sizeof(Singlelinkedlist));
+    tplist = malloc(sizeof(Singlelinkedlist));
+    initList(plist);
+    initList(tplist);
+    Buat_pipa_linkedlist();
+
     while (!WindowShouldClose()) {
-        if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) 
-        {
+        if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) {
             tombolpause(&tmblpause);
         }
 
-        UpdateMusic();  // Update music stream
+        UpdateMusic();
 
-        if (!tmblpause.isPause) 
-        {
-            // Background bergerak
+        if (!tmblpause.isPause) {
             bgX -= 0.5f;
             if (bgX <= -SCREEN_WIDTH) bgX = 0;
-
             updateAwan(awanList);
         }
 
@@ -78,83 +76,46 @@ int main() {
         DrawBackground(cityBg, bgX);
         gambarAwan(awanList);
 
-        if (currentState == MENU) 
-        {
+        if (currentState == MENU) {
             gameOverState = GAME_READY;
-            
-            // Hanya memulai musik menu sekali ketika memasuki state menu
             if (!menuMusicStarted) {
                 PlayMenuMusic();
                 menuMusicStarted = true;
             }
-            
+
             currentState = DrawMenu();
 
             if (currentState == GAMEPLAY) {
-                StopMenuMusic(); // Stop musik saat masuk gameplay
-                menuMusicStarted = false; // Reset flag
-
-                birds[0].position.y = SCREEN_HEIGHT / 2;
-                birds[0].speed = 0;
-                Buat_pipa(Pipa, TutupPipa);
-                score = 0; // Gunakan variabel global dari qlio.h
+                StopMenuMusic();
+                menuMusicStarted = false;
+                myBird->bird.position.y = SCREEN_HEIGHT / 2;
+                myBird->bird.speed = 0;
+                ResetList(plist, tplist);
+                Buat_pipa_linkedlist();
+                score = 0;
                 scoreSaved = false;
                 for (int i = 0; i < 3; i++) passedPipe[i] = false;
             }
         }
-        else if (currentState == BACKGROUND)
-        {
-            // Panggil fungsi tampilan dan logika pemilihan background
-            // Misalnya: DrawBackgroundSelection();
-            // Setelah selesai memilih, kembali ke menu
-            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
-            currentState = MENU;
-        }
 
-        else if (currentState == SKIN)
-        {
-            // Panggil fungsi tampilan dan logika pemilihan skin
-            // Setelah selesai memilih, kembali ke menu
-            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
-            currentState = MENU;
-        }
-
-        else if (currentState == LEADERBOARD)
-        {
-            // Panggil fungsi tampilan dan logika untuk score
-            // Setelah selesai memilih, kembali ke menu
-            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
-            currentState = MENU;
-        }
-        else if (currentState == GAMEPLAY) 
-        {
+        else if (currentState == GAMEPLAY) {
             if (!tmblpause.isPause) {
                 if (gameOverState == GAME_READY) {
-                    birds[0].position.y = SCREEN_HEIGHT / 2;
-                    birds[0].speed = 0;
+                    myBird->bird.position.y = SCREEN_HEIGHT / 2;
+                    myBird->bird.speed = 0;
 
                     if (IsKeyPressed(KEY_SPACE)) {
                         gameOverState = GAME_ACTIVE;
-                        birds[0].speed = FLAP_STRENGTH;
+                        myBird->bird.speed = FLAP_STRENGTH;
                         PlaySoundEffect(SOUND_FLAP);
                     }
                 } else if (gameOverState == GAME_ACTIVE) {
-
-                    UpdateBird(myBird); // Update burung dari Doubly Linked List
-                    
-                    // Update posisi pipa
-                    Pergerakan_pipa(Pipa, TutupPipa);
-                    
-                    for (int i = 0; i < 3; i++) {
-                        if (Pipa[i][0] > LEBAR_LAYAR && passedPipe[i]) {
-                            passedPipe[i] = false;
-                        }
-                    }
+                    UpdateBird(myBird);
+                    Pergerakan_pipa();
 
                     GameOverState prevState = gameOverState;
-                    gameOverState = UpdateGameCollision(birds[0], Pipa, TutupPipa);
+                    gameOverState = UpdateGameCollision(myBird->bird, plist, tplist);
 
-                    // Cek collision sound
                     if (prevState == GAME_ACTIVE && gameOverState == GAME_OVER) {
                         PlaySoundEffect(SOUND_COLLIDE);
                         PlaySoundEffect(SOUND_GAME_OVER);
@@ -162,60 +123,53 @@ int main() {
                     }
 
                     if (gameOverState == GAME_ACTIVE) {
-                        float birdRightX = birds[0].position.x + birds[0].texture.width;
+                        address p = plist->head;
+                        while (p != NULL) {
+                            float pipeRightX = p->korx + LEBAR_PIPA;
+                            float birdRightX = myBird->bird.position.x + myBird->bird.texture.width;
 
-                        for (int i = 0; i < 3; i++) {
-                            float pipeRightX = Pipa[i][0] + LEBAR_PIPA;
-
-                            if (!passedPipe[i] && birdRightX > pipeRightX) {
-                                // Gunakan fungsi TambahSkor untuk menambah score dan update highscore
+                            if (!p->status && birdRightX > pipeRightX) {
                                 TambahSkor();
                                 PlaySoundEffect(SOUND_SCORE);
-                                passedPipe[i] = true;
-
-                                printf(">> BURUNG LEWAT PIPA[%d] | SCORE: %d\n", i, score);
+                                p->status = 1;
+                                break;
                             }
+                            p = p->next;
                         }
 
                         if (IsKeyPressed(KEY_SPACE)) {
-                            birds[0].speed = FLAP_STRENGTH;
+                            myBird->bird.speed = FLAP_STRENGTH;
                             PlaySoundEffect(SOUND_FLAP);
                         }
                     }
-                } else { // GAME_OVER
+                } else {
                     if (!scoreSaved) {
-                        // Simpan highscore hanya sekali saat game over
                         SimpanHighscore();
                         Pipa_berhenti(false);
                         scoreSaved = true;
                     }
-                    
+
                     if (IsKeyPressed(KEY_ENTER)) {
                         gameOverState = GAME_READY;
                         Pipa_berhenti(true);
-                        ResetGame(&birds[0], Pipa, TutupPipa);
-                        ResetSkor(); // Gunakan fungsi reset skor
+                        ResetGame(&myBird->bird, NULL, NULL);
+                        ResetSkor();
+                        ResetList(plist, tplist);
+                        Buat_pipa_linkedlist();
                         scoreSaved = false;
-                        for (int i = 0; i < 3; i++) passedPipe[i] = false;
                     } else if (IsKeyPressed(KEY_BACKSPACE)) {
                         currentState = MENU;
-                        ResetGame(&birds[0], Pipa, TutupPipa);
-                        ResetSkor(); // Gunakan fungsi reset skor
+                        ResetGame(&myBird->bird, NULL, NULL);
+                        ResetSkor();
                         Pipa_berhenti(true);
                         scoreSaved = false;
-                        for (int i = 0; i < 3; i++) passedPipe[i] = false;
-                        
-                        // Jangan memulai musik menu di sini, biarkan flag menanganinya
                         menuMusicStarted = false;
                     }
                 }
             }
 
-            // Gambar game
-            Gambar_pipa(Pipa, TutupPipa, score);
-
-            DrawBird(myBird); // Gambar burung dari Doubly Linked List
-
+            Gambar_pipa(score);
+            DrawBird(myBird);
             DrawText(TextFormat("Score: %d", score), SCREEN_WIDTH / 2 - 60, 10, 30, BLACK);
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
 
@@ -239,15 +193,15 @@ int main() {
         EndDrawing();
     }
 
-    // Simpan highscore sebelum keluar (jika perlu)
-    SimpanHighscore(); // Fungsi yang diperbarui hanya akan menyimpan jika nilai highscore berbeda
-
-    // Unload dan cleanup
-    UnloadBird(myBird); // Bersihkan resource burung linked list
+    SimpanHighscore();
+    UnloadBird(myBird);
     UnloadSounds();
     CloseAudioDevice();
-
     freeAwan(&awanList);
+    freeList(plist);
+    freeList(tplist);
+    free(plist);
+    free(tplist);
     CloseWindow();
 
     return 0;

@@ -1,103 +1,48 @@
-#include "raylib.h"
-#include "dava.h"
-#include "bird_struct.h"
-#include "alexandrio.h"
-#include "zakky.h"
+#include <stddef.h>
 #include "zahra.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "raylib.h"
+#include "bird_struct.h"
+#include "pipa_ll.h"
 
-// Status permainan global
-GameOverState gameOverState = GAME_ACTIVE;
+#define PIPA_WIDTH 52  // Contoh lebar pipa, sesuaikan dengan gambar pipamu
 
-// Fungsi untuk memeriksa collision antara burung dan pipa
-bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
-    // Koordinat penting burung - bagian tengah burung
-    float birdCenterX = bird.position.x + bird.texture.width/2;
-    float birdCenterY = bird.position.y + bird.texture.height/2;
-    float birdRadius = 5;
-    
-    for (int i = 0; i < 3; i++) {
-        // Koordinat pipa
-        float pipeLeft = Pipa[i][0];
-        float pipeRight = Pipa[i][0] + LEBAR_PIPA;
-        
-        // Jika burung berada di area pipa secara horizontal
-        if (birdCenterX + birdRadius > pipeLeft && birdCenterX - birdRadius < pipeRight) {
-            // Longgarkan margin untuk pipa bawah
-            float topPipeBottom = Pipa[i][1] + 30; // Batas bawah pipa atas
-            float bottomPipeTop = Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH; // Tambah offset 10px
-            
-            // Cek collision dengan pipa atas
-            if (birdCenterY - birdRadius < topPipeBottom) {
-                return true;
-            }
-            
-            // Cek collision dengan pipa bawah (dengan offset)
-            if (birdCenterY + birdRadius > bottomPipeTop) {
-                return true;
-            }
+GameOverState UpdateGameCollision(Bird bird, Singlelinkedlist *plist, Singlelinkedlist *tplist) {
+    address p = plist->head;    // linked list pipa bawah
+    address t = tplist->head;   // linked list pipa atas
+
+    // Ukuran bird sudah di-scale
+    float birdWidth = bird.texture.width * bird.scale;
+    float birdHeight = bird.texture.height * bird.scale;
+
+    Rectangle birdRect = { bird.position.x, bird.position.y, birdWidth, birdHeight };
+
+    while (p != NULL && t != NULL) {
+        // Posisi dan ukuran pipa bawah
+        Rectangle pipaRect;
+        pipaRect.x = p->korx;
+        pipaRect.width = PIPA_WIDTH;
+        pipaRect.height = p->tinggi;
+        pipaRect.y = TINGGI_LAYAR - p->tinggi;  // pipa bawah di dasar layar
+
+        // Posisi dan ukuran pipa atas
+        Rectangle tutupPipaRect;
+        tutupPipaRect.x = t->korx;
+        tutupPipaRect.width = PIPA_WIDTH;
+        tutupPipaRect.height = t->tinggi;
+        tutupPipaRect.y = 0;  // pipa atas di atas layar
+
+        if (CheckCollisionRecs(birdRect, pipaRect) || CheckCollisionRecs(birdRect, tutupPipaRect)) {
+            return GAME_OVER;
         }
-    }
-    
-    return false;
-}
 
-// Fungsi untuk memeriksa collision antara burung dan tanah
-bool CheckBirdGroundCollision(Bird bird) {
-    // Koordinat penting burung - bagian tengah burung dengan area kecil
-    float birdCenterX = bird.position.x + bird.texture.width/2;
-    float birdCenterY = bird.position.y + bird.texture.height/2;
-    float birdRadius = 5;
-    
-    // Posisi Y tanah
-    const int GROUND_Y_POSITION = 425;
-    
-    // Cek apakah bagian bawah area collision burung menyentuh tanah
-    if (birdCenterY + birdRadius >= GROUND_Y_POSITION) {
-        return true;
+        p = p->next;
+        t = t->next;
     }
-    
-    return false;
-}
 
-// Fungsi untuk memperbarui status permainan berdasarkan collision
-GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
-    // Jika terjadi collision dengan pipa atau tanah, game over
-    if (CheckBirdPipeCollision(bird, Pipa, TutupPipa) || CheckBirdGroundCollision(bird)) {
+    // Cek apakah bird kena batas atas atau bawah layar
+    if (bird.position.y >= TINGGI_LAYAR - birdHeight || bird.position.y <= 0) {
         return GAME_OVER;
     }
-    
-    return GAME_ACTIVE; // Permainan tetap aktif jika tidak ada collision
-}
 
-// Fungsi untuk menampilkan layar game over
-// Fungsi untuk menampilkan layar game over
-void DrawGameOver(int screenWidth, int screenHeight, int score) {
-    // Gambar kotak transparan sebagai background
-    DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0, 0, 0, 180});
-    
-    // Tampilkan teks "GAME OVER"
-    DrawText("GAME OVER", screenWidth / 2 - 120, screenHeight / 3, 40, RED);
-    
-    // Tampilkan skor akhir
-    char scoreText[20];
-    sprintf(scoreText, "Score: %d", score);
-    DrawText(scoreText, screenWidth / 2 - 60, screenHeight / 2 - 20, 30, WHITE);
-    
-    DrawText("Press ENTER to restart", screenWidth / 2 - 120, screenHeight / 2 + 40, 20, WHITE);
-    DrawText("Press BACKSPACE for menu", screenWidth / 2 - 140, screenHeight / 2 + 70, 20, WHITE);
-}
-
-// Fungsi untuk me-reset game
-void ResetGame(Bird *bird, int Pipa[3][3], int TutupPipa[3][3]) {
-    // Reset posisi burung
-    bird->position.y = TINGGI_LAYAR / 2;
-    bird->speed = 0;
-    
-    // Re-inisialisasi pipa
-    Buat_pipa(Pipa, TutupPipa);
-    
-    // Reset status game (ke status menunggu)
-    gameOverState = GAME_READY;
+    return GAME_ACTIVE;
 }

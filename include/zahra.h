@@ -1,23 +1,22 @@
+// zahra.h
 #ifndef ZAHRA_H
 #define ZAHRA_H
 
-#include "raylib.h"
 #include "bird_struct.h"
-#include "zakky.h"
 #include "alexandrio.h"
 
-// Status permainan
 typedef enum {
-    GAME_READY,   // Status menunggu input pertama
-    GAME_ACTIVE,  // Status permainan aktif
-    GAME_OVER     // Status game over
+    GAME_READY,   // Menunggu input pertama
+    GAME_ACTIVE,  // Permainan sedang berjalan
+    GAME_OVER     // Game over
 } GameOverState;
 
-// Deklarasi fungsi collision
-bool CheckBirdPipeCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]);
-bool CheckBirdGroundCollision(Bird bird);
-GameOverState UpdateGameCollision(Bird bird, int Pipa[3][3], int TutupPipa[3][3]);
-void DrawGameOver(int screenWidth, int screenHeight, int score);
-void ResetGame(Bird *bird, int Pipa[3][3], int TutupPipa[3][3]);
+typedef enum {
+    STATE_MENU,
+    STATE_PLAYING,
+    STATE_GAMEOVER
+} ZahraGameState;
 
-#endif // ZAHRA_H
+GameOverState UpdateGameCollision(Bird bird, Singlelinkedlist *plist, Singlelinkedlist *tplist);
+
+#endif
