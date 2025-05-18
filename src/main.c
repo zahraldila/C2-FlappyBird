@@ -32,7 +32,12 @@ int main() {
     Bird bird = CreateBird(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2, "Flappy.png", 0.8f); // posisi burung agak kanan
 
     Buat_awan(Awan);
-    Buat_pipa(Pipa, TutupPipa);
+    plist = (Singlelinkedlist *)malloc(sizeof(Singlelinkedlist));
+    tplist = (Singlelinkedlist *)malloc(sizeof(Singlelinkedlist));
+    initList(plist);
+    initList(tplist);
+    Buat_pipa();
+  
 
     // === Sistem Skor ===
     bool scoreSaved = false;
@@ -86,7 +91,7 @@ int main() {
 
                 birds[0].position.y = SCREEN_HEIGHT / 2;
                 birds[0].speed = 0;
-                Buat_pipa(Pipa, TutupPipa);
+                Buat_pipa();
                 score = 0; // Gunakan variabel global dari qlio.h
                 scoreSaved = false;
                 for (int i = 0; i < 3; i++) passedPipe[i] = false;
@@ -107,7 +112,7 @@ int main() {
                     UpdateBirds(birds, MAX_BIRDS);
                     
                     // Update posisi pipa
-                    Pergerakan_pipa(Pipa, TutupPipa);
+                    Pergerakan_pipa();
                     
                     for (int i = 0; i < 3; i++) {
                         if (Pipa[i][0] > LEBAR_LAYAR && passedPipe[i]) {
@@ -177,7 +182,7 @@ int main() {
 
             // Gambar game
             DrawBirds(birds, MAX_BIRDS);
-            Gambar_pipa(Pipa, TutupPipa, score);
+            Gambar_pipa();
 
             DrawText(TextFormat("Score: %d", score), SCREEN_WIDTH / 2 - 60, 10, 30, BLACK);
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
