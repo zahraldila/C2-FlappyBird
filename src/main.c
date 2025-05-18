@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include "dava.h"
 #include "zakky.h"
+#include "bird_struct.h"
 #include "alexandrio.h"
 #include "zahra.h"
 #include "qlio.h"
@@ -28,16 +29,9 @@ int main() {
     jedapause(&tmblpause);
 
     Bird birds[MAX_BIRDS];
-    InitBirds(birds, MAX_BIRDS);
-    Bird bird = CreateBird(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2, "Flappy.png", 0.8f); // posisi burung agak kanan
+    Buat_pipa(Pipa, TutupPipa);
 
-    Buat_awan(Awan);
-    plist = (Singlelinkedlist *)malloc(sizeof(Singlelinkedlist));
-    tplist = (Singlelinkedlist *)malloc(sizeof(Singlelinkedlist));
-    initList(plist);
-    initList(tplist);
-    Buat_pipa();
-  
+    BirdNode *myBird = InitBird();
 
     // === Sistem Skor ===
     bool scoreSaved = false;
@@ -102,7 +96,7 @@ int main() {
 
                 birds[0].position.y = SCREEN_HEIGHT / 2;
                 birds[0].speed = 0;
-                Buat_pipa();
+                Buat_pipa(Pipa, TutupPipa);
                 score = 0; // Gunakan variabel global dari qlio.h
                 scoreSaved = false;
                 for (int i = 0; i < 3; i++) passedPipe[i] = false;
@@ -145,11 +139,11 @@ int main() {
                         PlaySoundEffect(SOUND_FLAP);
                     }
                 } else if (gameOverState == GAME_ACTIVE) {
-                    // Update posisi burung
-                    UpdateBirds(birds, MAX_BIRDS);
+
+                    UpdateBird(myBird); // Update burung dari Doubly Linked List
                     
                     // Update posisi pipa
-                    Pergerakan_pipa();
+                    Pergerakan_pipa(Pipa, TutupPipa);
                     
                     for (int i = 0; i < 3; i++) {
                         if (Pipa[i][0] > LEBAR_LAYAR && passedPipe[i]) {
@@ -218,8 +212,9 @@ int main() {
             }
 
             // Gambar game
-            DrawBirds(birds, MAX_BIRDS);
-            Gambar_pipa();
+            Gambar_pipa(Pipa, TutupPipa, score);
+
+            DrawBird(myBird); // Gambar burung dari Doubly Linked List
 
             DrawText(TextFormat("Score: %d", score), SCREEN_WIDTH / 2 - 60, 10, 30, BLACK);
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
@@ -248,8 +243,7 @@ int main() {
     SimpanHighscore(); // Fungsi yang diperbarui hanya akan menyimpan jika nilai highscore berbeda
 
     // Unload dan cleanup
-    UnloadBirds(birds, MAX_BIRDS);
-    UnloadTexture(cityBg);
+    UnloadBird(myBird); // Bersihkan resource burung linked list
     UnloadSounds();
     CloseAudioDevice();
 
