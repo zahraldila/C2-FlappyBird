@@ -101,24 +101,3 @@ void ResetGame(Bird *bird, int Pipa[3][3], int TutupPipa[3][3]) {
     // Reset status game (ke status menunggu)
     gameOverState = GAME_READY;
 }
-
-// Fungsi untuk menampilkan hitbox (untuk debugging)
-void DrawHitboxes(Bird bird, int Pipa[3][3], int TutupPipa[3][3]) {
-    // Gambar area collision burung
-    float birdCenterX = bird.position.x + bird.texture.width/2;
-    float birdCenterY = bird.position.y + bird.texture.height/2;
-    DrawCircleLines(birdCenterX, birdCenterY, 10, RED);
-    
-    // Gambar area collision pipa
-    for (int i = 0; i < 3; i++) {
-        // Pipa atas
-        DrawRectangleLines(Pipa[i][0], 0, LEBAR_PIPA, Pipa[i][1], GREEN);
-        
-        // Pipa bawah
-        DrawRectangleLines(Pipa[i][0], 
-                         Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH, 
-                         LEBAR_PIPA, 
-                         TINGGI_LAYAR - (Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH), 
-                         BLUE);
-    }
-}

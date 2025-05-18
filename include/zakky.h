@@ -7,8 +7,8 @@
 extern float bgX;
 
 Bird CreateBird(float x, float y, const char *texturePath, float scale);
-void DrawBird(Bird bird);
-void UnloadBird(Bird *bird);
+// void DrawBird(Bird bird);
+// void UnloadBird(Bird *bird);
 
 
 typedef enum {
@@ -25,10 +25,10 @@ void jedapause (PauseState *tmblPause);
 void tombolpause (PauseState *tmblPause);
 void DrawPauseScreen(PauseState *tmblPause);
 
-void setupMenu(int screenWidth, int screenHeight);
-GameState pilihMenu(int screenWidth, int screenHeight);
-GameState DrawMenu(int screenWidth, int screenHeight);
-
+void setupMenu();
+GameState pilihMenu();
+GameState DrawMenu();
+ 
 extern int Awan[5][2];
 
 void Buat_awan(int Awan[5][2]);
