@@ -1,83 +1,60 @@
-//bird.c
 #include "raylib.h"
 #include "dava.h"
+#include "bird_struct.h"
 #include <stdlib.h>
-#include <time.h>
 
 float bgX;
 
-// Buat satu node burung dan return head-nya
-BirdNode* InitBirdsLinkedList(int count) {
+BirdNode* InitBird() {
     Image img = LoadImage("Flappy.png");
     ImageResize(&img, img.width / 3, img.height / 3);
 
-    BirdNode *head = NULL;
-    BirdNode *tail = NULL;
-
-    for (int i = 0; i < count; i++) {
-        BirdNode *newNode = (BirdNode *)malloc(sizeof(BirdNode));
-        newNode->bird.texture = LoadTextureFromImage(img);
-        newNode->bird.position = (Vector2){0, 200};
-        newNode->bird.speed = 0;
-        newNode->next = NULL;
-
-        if (head == NULL) {
-            head = newNode;
-            tail = newNode;
-        } else {
-            tail->next = newNode;
-            tail = newNode;
-        }
-    }
+    BirdNode *node = (BirdNode *)malloc(sizeof(BirdNode));
+    node->bird.texture = LoadTextureFromImage(img);
+    node->bird.position = (Vector2){100, 200}; // posisi awal burung
+    node->bird.speed = 0;
+    node->next = NULL;
+    node->prev = NULL;
 
     UnloadImage(img);
-    return head;
+    return node;
 }
 
-void UpdateBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        current->bird.speed += GRAVITY;
+void UpdateBird(BirdNode *node) {
+    if (node == NULL) return;
 
-        if (IsKeyPressed(KEY_SPACE)) {
-            current->bird.speed = FLAP_STRENGTH;
-        }
+    node->bird.speed += GRAVITY;
 
-        current->bird.position.y += current->bird.speed;
+    if (IsKeyPressed(KEY_SPACE)) {
+        node->bird.speed = FLAP_STRENGTH;
+    }
 
-        if (current->bird.position.y > 385) {
-            current->bird.position.y = 385;
-            current->bird.speed = 0;
-        }
+    node->bird.position.y += node->bird.speed;
 
-        if (current->bird.position.y < -15) {
-            current->bird.position.y = -15;
-            current->bird.speed = 0;
-        }
+    if (node->bird.position.y > TINGGI_LAYAR - 65) {
+        node->bird.position.y = TINGGI_LAYAR - 65;
+        node->bird.speed = 0;
+    }
 
-        current = current->next;
+    if (node->bird.position.y < 0) {
+        node->bird.position.y = 0;
+        node->bird.speed = 0;
     }
 }
 
-void DrawBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        DrawTexture(current->bird.texture, (int)current->bird.position.x, (int)current->bird.position.y, WHITE);
-        current = current->next;
+void DrawBird(BirdNode *node) {
+    if (node == NULL) return;
+    DrawTexture(node->bird.texture, (int)node->bird.position.x, (int)node->bird.position.y, WHITE);
+}
+
+void UnloadBird(BirdNode *node) {
+    if (node != NULL) {
+        UnloadTexture(node->bird.texture);
+        free(node);
     }
 }
 
-void UnloadBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        UnloadTexture(current->bird.texture);
-        BirdNode *temp = current;
-        current = current->next;
-        free(temp);
-    }
-}
-
-// Background tetap pakai float
+// Background
 void InitBackground(Texture2D *bg) {
     *bg = LoadTexture("city.png");
 }
