@@ -4,16 +4,23 @@
 #include "raylib.h"
 #include "bird_struct.h"
 
-#define MAX_BIRDS 1
-#define GRAVITY 0.5f
-#define FLAP_STRENGTH -8.0f
+#define GRAVITY 0.25f
+#define FLAP_STRENGTH -5.5f
+#define LEBAR_LAYAR 800
+#define TINGGI_LAYAR 450
 
-// Fungsi untuk linked list
-BirdNode* InitBirdsLinkedList(int count);
-void UpdateBirds(BirdNode *head);
-void DrawBirds(BirdNode *head);
-void UnloadBirds(BirdNode *head);
+// Inisialisasi burung dengan Doubly Linked List
 
+// Update posisi burung (naik turun)
+void UpdateBird(BirdNode *birdNode);
+
+// Gambar burung
+void DrawBird(BirdNode *birdNode);
+
+// Hapus resource burung
+void UnloadBird(BirdNode *birdNode);
+
+// Background
 void InitBackground(Texture2D *bg);
 void UpdateBackground(float *bgX);
 void DrawBackground(Texture2D bg, float bgX);

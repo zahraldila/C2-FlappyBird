@@ -5,17 +5,19 @@
 #define TINGGI_LAYAR 450
 
 #include "raylib.h"
-typedef struct {
+typedef struct Bird{
     Vector2 position;
     float speed;
     float scale;
     Texture2D texture;
 } Bird;
 
-// Untuk linked list burung
 typedef struct BirdNode {
     Bird bird;
+    struct BirdNode *prev;
     struct BirdNode *next;
 } BirdNode;
+
+BirdNode* InitBird();
 
 #endif
