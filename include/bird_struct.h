@@ -1,11 +1,9 @@
 #ifndef BIRD_STRUCT_H
 #define BIRD_STRUCT_H
 
-#define LEBAR_LAYAR 800
-#define TINGGI_LAYAR 450
-
 #include "raylib.h"
-typedef struct Bird{
+
+typedef struct Bird {
     Vector2 position;
     float speed;
     float scale;
@@ -18,6 +16,10 @@ typedef struct BirdNode {
     struct BirdNode *next;
 } BirdNode;
 
-BirdNode* InitBird();
+// Node untuk pergerakan Y
+typedef struct YNode {
+    float y;
+    struct YNode *next;
+} YNode;
 
 #endif

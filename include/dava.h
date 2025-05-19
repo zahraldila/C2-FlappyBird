@@ -9,16 +9,15 @@
 #define LEBAR_LAYAR 800
 #define TINGGI_LAYAR 450
 
-// Inisialisasi burung dengan Doubly Linked List
-
-// Update posisi burung (naik turun)
-void UpdateBird(BirdNode *birdNode);
-
-// Gambar burung
+// Bird functions
+BirdNode* InitBird();
+void UpdateBirdYMovement(BirdNode *birdNode, YNode **yHead);
 void DrawBird(BirdNode *birdNode);
-
-// Hapus resource burung
 void UnloadBird(BirdNode *birdNode);
+
+// Y movement linked list
+void AddPositionY(YNode **head, float y);
+void FreeYMovementList(YNode *head);
 
 // Background
 void InitBackground(Texture2D *bg);
