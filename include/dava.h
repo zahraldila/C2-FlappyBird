@@ -4,24 +4,27 @@
 #include "raylib.h"
 #include "bird_struct.h"
 
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
 #define GRAVITY 0.25f
 #define FLAP_STRENGTH -5.5f
 #define LEBAR_LAYAR 800
-#define TINGGI_LAYAR 450
 
-// Bird functions
-BirdNode* InitBird();
-void UpdateBirdYMovement(BirdNode *birdNode, YNode **yHead);
-void DrawBird(BirdNode *birdNode);
-void UnloadBird(BirdNode *birdNode);
+typedef struct BirdGame {
+    Bird bird;
+    BirdNode* yTrackHead;   // Head DLL posisi Y
+    BirdNode* yTrackNow;    // Pointer ke node saat ini (terbaru)
+} BirdGame;
 
-// Y movement linked list
-void AddPositionY(YNode **head, float y);
-void FreeYMovementList(YNode *head);
+// Fungsi utama
+BirdGame* InitBird();
+void UpdateBird(BirdGame* bg);
+void DrawBird(BirdGame* bg);
+void UnloadBird(BirdGame* bg);
 
-// Background
-void InitBackground(Texture2D *bg);
-void UpdateBackground(float *bgX);
+// Fungsi latar belakang
+void InitBackground(Texture2D* bg);
+void UpdateBackground(float* bgX);
 void DrawBackground(Texture2D bg, float bgX);
 
 #endif

@@ -1,89 +1,98 @@
-// bird.c
 #include "raylib.h"
 #include "dava.h"
 #include <stdlib.h>
-#include <time.h>
 
-float bgX;
+float bgX = 0;
 
-// Buat satu node burung dan return head-nya
-BirdNode* InitBirdsLinkedList(int count) {
+// Inisialisasi burung dan linked list yTrack
+BirdGame* InitBird() {
+    BirdGame* bg = (BirdGame*)malloc(sizeof(BirdGame));
+
     Image img = LoadImage("Flappy.png");
     ImageResize(&img, img.width / 3, img.height / 3);
-
-    BirdNode *head = NULL;
-    BirdNode *tail = NULL;
-
-    for (int i = 0; i < count; i++) {
-        BirdNode *newNode = (BirdNode *)malloc(sizeof(BirdNode));
-        newNode->bird.texture = LoadTextureFromImage(img);
-        newNode->bird.position = (Vector2){0, 200};
-        newNode->bird.speed = 0;
-        newNode->next = NULL;
-
-        if (head == NULL) {
-            head = newNode;
-            tail = newNode;
-        } else {
-            tail->next = newNode;
-            tail = newNode;
-        }
-    }
-
+    bg->bird.texture = LoadTextureFromImage(img);
     UnloadImage(img);
-    return head;
+
+    bg->bird.position = (Vector2){100, SCREEN_HEIGHT / 2};
+    bg->bird.speed = 0;
+
+    BirdNode* first = (BirdNode*)malloc(sizeof(BirdNode));
+    first->y = bg->bird.position.y;
+    first->speed = bg->bird.speed;
+    first->prev = NULL;
+    first->next = NULL;
+
+    bg->yTrackHead = first;
+    bg->yTrackNow = first;
+
+    return bg;
 }
 
-void UpdateBirds(BirdNode *head, YNode **yHead) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        current->bird.speed += GRAVITY;
+// Tambah posisi baru ke DLL
+void AddBirdPosition(BirdGame* bg) {
+    BirdNode* newNode = (BirdNode*)malloc(sizeof(BirdNode));
+    newNode->y = bg->bird.position.y;
+    newNode->speed = bg->bird.speed;
+    newNode->prev = bg->yTrackNow;
+    newNode->next = NULL;
 
-        if (IsKeyPressed(KEY_SPACE)) {
-            current->bird.speed = FLAP_STRENGTH;
-        }
+    bg->yTrackNow->next = newNode;
+    bg->yTrackNow = newNode;
+}
 
-        float newY = current->bird.position.y + current->bird.speed;
-        AddPositionY(yHead, newY);
-        UpdateBirdYMovement(&current->bird, yHead);
+// Update posisi burung dan simpan ke DLL
+void UpdateBird(BirdGame* bg) {
+    bg->bird.speed += GRAVITY;
 
-        if (current->bird.position.y > 385) {
-            current->bird.position.y = 385;
-            current->bird.speed = 0;
-        }
-
-        if (current->bird.position.y < -15) {
-            current->bird.position.y = -15;
-            current->bird.speed = 0;
-        }
-
-        current = current->next;
+    if (IsKeyPressed(KEY_SPACE)) {
+        bg->bird.speed = FLAP_STRENGTH;
     }
-}
 
-void DrawBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        DrawTexture(current->bird.texture, (int)current->bird.position.x, (int)current->bird.position.y, WHITE);
-        current = current->next;
+    bg->bird.position.y += bg->bird.speed;
+
+    if (bg->bird.position.y > SCREEN_HEIGHT - 65) {
+        bg->bird.position.y = SCREEN_HEIGHT - 65;
+        bg->bird.speed = 0;
     }
+
+    if (bg->bird.position.y < -15) {
+        bg->bird.position.y = -15;
+        bg->bird.speed = 0;
+    }
+
+    AddBirdPosition(bg);
 }
 
-void UnloadBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        UnloadTexture(current->bird.texture);
-        BirdNode *temp = current;
+// Gambar burung
+void DrawBird(BirdGame* bg) {
+    DrawTexture(bg->bird.texture, (int)bg->bird.position.x, (int)bg->bird.position.y, WHITE);
+}
+
+// Bebaskan memori
+void UnloadBird(BirdGame* bg) {
+    UnloadTexture(bg->bird.texture);
+
+    // Hapus DLL posisi
+    BirdNode* current = bg->yTrackNow;
+    while (current && current->prev) {
+        current = current->prev;
+    }
+
+    while (current) {
+        BirdNode* temp = current;
         current = current->next;
         free(temp);
     }
+
+    free(bg);
 }
 
-void InitBackground(Texture2D *bg) {
+// Background tetap pakai float
+void InitBackground(Texture2D* bg) {
     *bg = LoadTexture("city.png");
 }
 
-void UpdateBackground(float *bgX) {
+void UpdateBackground(float* bgX) {
     *bgX -= 0.5f;
     if (*bgX <= -LEBAR_LAYAR) {
         *bgX = 0;
@@ -93,39 +102,4 @@ void UpdateBackground(float *bgX) {
 void DrawBackground(Texture2D bg, float bgX) {
     DrawTextureEx(bg, (Vector2){bgX, 0}, 0.0f, 1.0f, WHITE);
     DrawTextureEx(bg, (Vector2){bgX + LEBAR_LAYAR, 0}, 0.0f, 1.0f, WHITE);
-}
-
-// Linked list posisi Y
-void AddPositionY(YNode **head, float y) {
-    YNode *newNode = (YNode*)malloc(sizeof(YNode));
-    newNode->y = y;
-    newNode->prev = NULL;
-    newNode->next = *head;
-
-    if (*head != NULL)
-        (*head)->prev = newNode;
-
-    *head = newNode;
-}
-
-void UpdateBirdYMovement(Bird *bird, YNode **yHead) {
-    if (*yHead == NULL) return;
-
-    bird->position.y = (*yHead)->y;
-
-    YNode *temp = *yHead;
-    *yHead = (*yHead)->next;
-
-    if (*yHead != NULL)
-        (*yHead)->prev = NULL;
-
-    free(temp);
-}
-
-void FreeYMovementList(YNode **head) {
-    while (*head != NULL) {
-        YNode *temp = *head;
-        *head = (*head)->next;
-        free(temp);
-    }
 }
