@@ -6,10 +6,10 @@ typedef struct tNode* address;
 
 typedef struct tNode {
     infotype korx;
-    infotype tinggi;
-    infotype status;
+    infotype tinggi; // Akan merepresentasikan tinggi pipa ATAS
+    infotype status; // 0 = belum dilewati, 1 = sudah dilewati & skor ditambah
     address next;
-}Node;
+} Node;
 
 typedef struct Singlelinkedlist{
     address head;
@@ -17,10 +17,14 @@ typedef struct Singlelinkedlist{
 }Singlelinkedlist;
 
 void initList(Singlelinkedlist *L);
-address buatNodePipa(int i);
-address buatNodeTPipa(int i, int tinggi);
-void insertBelakang(address newNodePipa, address newNodeTPipa);
-void deleteFirst();
-void freeList();
+address buatNodePipaGenerik(int tinggi_pipa_atas);
+void insertBelakang(Singlelinkedlist *list, address newNode);
+void deleteFirst(Singlelinkedlist *list);
+void freeList(Singlelinkedlist *list); // Membersihkan satu list
 
-#endif //pipa_ll 
+// Fungsi untuk mengelola plist dan tplist secara bersamaan
+void insertBelakangPasangan(address newNodePipa, address newNodeTPipa);
+void deleteFirstPasangan(void);
+void freeListPasangan(void); // Akan bekerja pada plist dan tplist global
+
+#endif //PIPA_LL

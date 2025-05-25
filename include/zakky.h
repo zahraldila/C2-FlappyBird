@@ -2,36 +2,32 @@
 #define ZAKKY_H
 
 #include "raylib.h"
-#include "bird_struct.h" // Jika ada dependensi ke struct Bird, jika tidak, bisa dihapus dari sini
-#include "dava.h"        // Untuk BackgroundSelector
+#include "bird_struct.h"
+#include "dava.h"
 
 #define KECEPATAN_AWAN 1
 #define JUMLAH_AWAN 5
-#define KECEPATAN_BACKGROUND_SCROLL 0.5f // Kecepatan background yang sudah kita atur
+#define KECEPATAN_BACKGROUND_SCROLL 0.5f
 
-extern float bgX; // Variabel global untuk posisi X background
+extern float bgX;
 
-// Konstanta layar, pastikan konsisten atau ambil dari header utama seperti alexandrio.h atau dava.h
-#ifndef LEBAR_LAYAR // Lindungi agar tidak redefinisi jika sudah ada di header lain
+#ifndef LEBAR_LAYAR
 #define LEBAR_LAYAR 800
 #endif
-#ifndef SCREEN_HEIGHT // Lindungi agar tidak redefinisi
+#ifndef SCREEN_HEIGHT
 #define SCREEN_HEIGHT 450
 #endif
-
 
 typedef enum {
     MENU,
     GAMEPLAY,
     BACKGROUND_SELECTION,
-    SKIN,                 // State baru untuk pemilihan skin (placeholder)
-    LEADERBOARD,          // Placeholder
-    CREDIT                // Placeholder (jika diperlukan)
-    // EXIT_GAME         // Opsi lain untuk menangani keluar game dengan lebih bersih
+    SKIN,
+    LEADERBOARD, // State baru
+    CREDIT
 } GameState;
 
-typedef struct
-{
+typedef struct {
     bool isPause;
 } PauseState;
 
@@ -39,23 +35,20 @@ void jedapause (PauseState *tmblPause);
 void tombolpause (PauseState *tmblPause);
 void DrawPauseScreen(PauseState *tmblPause);
 
-// Fungsi Menu Utama
 void setupMenu(void);
 GameState pilihMenu(void);
-GameState DrawMenu(void); // Ini adalah kombinasi setupMenu dan pilihMenu
+GameState DrawMenu(void);
 
-// Fungsi untuk Layar Pemilihan Background
 void InitBackgroundSelectionScreen(void);
 GameState UpdateBackgroundSelectionScreen(BackgroundSelector *bgSelector, GameState currentGameState);
 void DrawBackgroundSelectionScreen(BackgroundSelector *bgSelector);
 
-// Fungsi untuk Layar Pemilihan Skin (Placeholder untuk masa depan)
-// void InitSkinSelectionScreen(void);
-// GameState UpdateSkinSelectionScreen(Bird *currentBird, GameState currentGameState);
-// void DrawSkinSelectionScreen(Bird *currentBird);
+// Fungsi untuk Layar Leaderboard (ditempatkan di main_menu.c)
+void InitLeaderboardScreen(void); // Mungkin tidak perlu jika LoadLeaderboard sudah cukup
+GameState UpdateLeaderboardScreen(GameState currentGameState);
+void DrawLeaderboardScreen(Font font); // Butuh font untuk menggambar teks
 
 
-// Fungsi Awan
 typedef struct AwanNode {
     float x;
     float y;

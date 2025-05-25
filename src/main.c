@@ -12,202 +12,203 @@
 #include "alexandrio.h"
 #include "zahra.h"
 #include "qlio.h"
-#include "sound.h"
+#include "sound.h"       // Untuk InitSounds, PlayMenuMusic, StopMenuMusic, UpdateMusic, IsMenuMusicCurrentlyPlaying
 #include "game_state.h"
 
+// plist dan tplist global dari PipaLinkedList.c
+
 int main() {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird C2"); //
-    Image icon = LoadImage("assets/icon.png"); //
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird C2");
+    Image icon = LoadImage("assets/icon.png");
     if (icon.data != NULL) {
-        SetWindowIcon(icon); //
-        UnloadImage(icon); //
+        SetWindowIcon(icon);
+        UnloadImage(icon);
     } else {
-        TraceLog(LOG_WARNING, "MAIN: Gagal memuat ikon 'assets/icon.png'"); //
+        TraceLog(LOG_WARNING, "MAIN: Gagal memuat ikon 'assets/icon.png'");
     }
-    SetTargetFPS(60); //
-    SetRandomSeed((unsigned int)time(NULL)); //
+    SetTargetFPS(60);
+    SetRandomSeed((unsigned int)time(NULL));
 
-    BackgroundSelector *backgroundSelector = InitBackgroundSelector(); //
+    BackgroundSelector *backgroundSelector = InitBackgroundSelector();
     if (backgroundSelector == NULL || backgroundSelector->current == NULL) {
-        TraceLog(LOG_FATAL, "MAIN: Gagal menginisialisasi BackgroundSelector."); //
+        TraceLog(LOG_FATAL, "MAIN: Gagal menginisialisasi BackgroundSelector.");
         CloseWindow();
         return 1;
     }
 
-    GameState currentState = MENU; // State awal
-    GameOverState gameOverState = GAME_READY; //
+    GameState currentState = MENU;
+    GameOverState gameOverState = GAME_READY;
     PauseState tmblpause;
-    jedapause(&tmblpause); //
+    jedapause(&tmblpause);
 
-    Bird *myBird = InitBird(); //
+    Bird *myBird = InitBird();
     if (myBird == NULL) {
-        TraceLog(LOG_FATAL, "MAIN: Gagal menginisialisasi burung!"); //
-        UnloadBackgroundSelector(backgroundSelector); //
+        TraceLog(LOG_FATAL, "MAIN: Gagal menginisialisasi burung!");
+        UnloadBackgroundSelector(backgroundSelector);
         CloseWindow();
         return 1;
-    }
+     }
     if (myBird->texture.id == 0) {
         TraceLog(LOG_WARNING, "MAIN: Tekstur burung tidak valid setelah InitBird(). Burung mungkin tidak terlihat.");
     }
 
-    bool scoreSaved = false; //
-    InitSkor(); //
-
-    InitAudioDevice(); //
+    InitAudioDevice();
     if (!IsAudioDeviceReady()) {
-        TraceLog(LOG_WARNING, "MAIN: Gagal menginisialisasi audio device.");
+        TraceLog(LOG_WARNING, "MAIN: Gagal menginisialisasi audio device. Tidak akan ada suara.");
+    } else {
+        InitSounds();
     }
-    InitSounds(); //
-    bool menuMusicStarted = false; //
 
-    AwanNode *awanList = NULL; //
-    for (int j = 0; j < JUMLAH_AWAN; j++) { //
+    InitSkor();
+    bool scoreSavedThisSession = false;
+
+    AwanNode *awanList = NULL;
+    for (int j = 0; j < JUMLAH_AWAN; j++) {
         float x_awan = (float)SCREEN_WIDTH + j * 200.0f;
         float y_awan = (float)(rand() % 150);
-        insertAwan(&awanList, x_awan, y_awan); //
+        insertAwan(&awanList, x_awan, y_awan);
     }
 
-    plist = (Singlelinkedlist*)malloc(sizeof(Singlelinkedlist)); //
-    tplist = (Singlelinkedlist*)malloc(sizeof(Singlelinkedlist)); //
+    plist = (Singlelinkedlist*)malloc(sizeof(Singlelinkedlist));
+    tplist = (Singlelinkedlist*)malloc(sizeof(Singlelinkedlist));
     if (plist == NULL || tplist == NULL) {
-        TraceLog(LOG_FATAL, "MAIN: Gagal alokasi memori untuk list pipa!"); //
-        if (myBird) UnloadBird(myBird); //
-        UnloadBackgroundSelector(backgroundSelector); //
-        if (IsAudioDeviceReady()) CloseAudioDevice(); //
+        TraceLog(LOG_FATAL, "MAIN: Gagal alokasi memori untuk list pipa!");
+        if (myBird) UnloadBird(myBird);
+        UnloadBackgroundSelector(backgroundSelector);
+        if (IsAudioDeviceReady()) CloseAudioDevice();
         CloseWindow();
         return 1;
     }
-    initList(plist); //
-    initList(tplist); //
-    Buat_pipa_linkedlist(); //
+    initList(plist);
+    initList(tplist);
+    Buat_pipa_linkedlist();
 
-    bool shouldCloseGame = false; //
+    Font gameFont = GetFontDefault();
 
-    while (!WindowShouldClose() && !shouldCloseGame) { //
-        UpdateMusic(); // Untuk musik menu
+    bool shouldCloseGame = false;
+
+    while (!WindowShouldClose() && !shouldCloseGame) {
+        if (IsAudioDeviceReady()) UpdateMusic();
 
         // --- UPDATE LOGIC PER STATE ---
         switch (currentState) {
             case MENU: {
-                gameOverState = GAME_READY; //
-                if (!menuMusicStarted) { //
-                    PlayMenuMusic(); //
-                    menuMusicStarted = true; //
+                gameOverState = GAME_READY;
+                scoreSavedThisSession = false;
+                if (IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
+                    PlayMenuMusic();
                 }
-                // Pembaruan background dan awan untuk MENU
-                bgX -= 0.5f; //
-                if (backgroundSelector->current && backgroundSelector->current->texture.id != 0) { //
-                     if (bgX <= -backgroundSelector->current->texture.width) bgX = 0; //
-                } else if (bgX <= -SCREEN_WIDTH) { //
-                     bgX = 0; //
+                bgX -= KECEPATAN_BACKGROUND_SCROLL;
+                if (backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
+                     if (bgX <= -backgroundSelector->current->texture.width) bgX = 0;
+                } else if (bgX <= -SCREEN_WIDTH) {
+                     bgX = 0;
                 }
-                updateAwan(awanList); //
+                updateAwan(awanList);
 
-                GameState nextStateFromMenu = pilihMenu(); // pilihMenu() dari zakky.h menghandle input & logika
-                if (currentState != nextStateFromMenu) { // Jika ada perubahan state
+                GameState nextStateFromMenu = pilihMenu();
+                if (currentState != nextStateFromMenu) {
                     currentState = nextStateFromMenu;
-                    if (currentState == GAMEPLAY) { //
-                        StopMenuMusic(); //
-                        menuMusicStarted = false; //
-                        myBird->position.y = SCREEN_HEIGHT / 2.0f; //
-                        myBird->speed = 0; //
-                        freeList();
-                        Buat_pipa_linkedlist(); //
-                        ResetSkor(); //
-                        scoreSaved = false; //
+                    if (currentState == GAMEPLAY) {
+                        if (IsAudioDeviceReady()) StopMenuMusic();
+                        myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
+                        myBird->speed = 0;
+                        freeListPasangan();
+                        Buat_pipa_linkedlist();
+                        ResetSkor();
                         Pipa_berhenti(true);
-                        jedapause(&tmblpause); //
+                        jedapause(&tmblpause);
                     } else if (currentState == BACKGROUND_SELECTION) {
-                        InitBackgroundSelectionScreen(); // Panggil sekali saat masuk state
+                        InitBackgroundSelectionScreen();
+                    } else if (currentState == LEADERBOARD) {
+                        InitLeaderboardScreen();
                     }
-                    // Tambahkan else if untuk SKIN, LEADERBOARD jika ada
                 }
             } break;
             case BACKGROUND_SELECTION: {
-                // Di layar ini, background utama game tidak perlu scroll
                 currentState = UpdateBackgroundSelectionScreen(backgroundSelector, currentState);
+                 if (currentState == MENU && IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
+                    PlayMenuMusic();
+                }
+            } break;
+            case LEADERBOARD: {
+                currentState = UpdateLeaderboardScreen(currentState);
+                 if (currentState == MENU && IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
+                    PlayMenuMusic();
+                }
             } break;
             case GAMEPLAY: {
-                if (IsKeyPressed(KEY_P) && gameOverState != GAME_OVER) { //
-                    tombolpause(&tmblpause); //
-                }
+                if (IsKeyPressed(KEY_P) && gameOverState != GAME_OVER) { tombolpause(&tmblpause); }
 
-                if (!tmblpause.isPause) { //
-                    bgX -= 0.5f; //
-                    if (backgroundSelector->current && backgroundSelector->current->texture.id != 0) { //
-                         if (bgX <= -backgroundSelector->current->texture.width) bgX = 0; //
-                    } else if (bgX <= -SCREEN_WIDTH) { //
-                         bgX = 0; //
+                if (!tmblpause.isPause) {
+                    bgX -= KECEPATAN_BACKGROUND_SCROLL;
+                    if (backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
+                         if (bgX <= -backgroundSelector->current->texture.width) bgX = 0;
+                    } else if (bgX <= -SCREEN_WIDTH) {
+                         bgX = 0;
                     }
-                    updateAwan(awanList); //
+                    updateAwan(awanList);
 
-                    if (gameOverState == GAME_READY) { //
-                        myBird->position.y = SCREEN_HEIGHT / 2.0f; //
-                        myBird->speed = 0; //
-                        if (IsKeyPressed(KEY_SPACE)) { //
-                            gameOverState = GAME_ACTIVE; //
-                            myBird->speed = FLAP_STRENGTH; //
-                            PlaySoundEffect(SOUND_FLAP); //
+                    if (gameOverState == GAME_READY) {
+                        myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
+                        myBird->speed = 0;
+                        if (IsKeyPressed(KEY_SPACE)) {
+                            gameOverState = GAME_ACTIVE;
+                            myBird->speed = FLAP_STRENGTH;
+                            if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_FLAP);
                         }
-                    } else if (gameOverState == GAME_ACTIVE) { //
-                        UpdateBird(myBird); //
-                         if (IsKeyPressed(KEY_SPACE)) { //
-                            myBird->speed = FLAP_STRENGTH; //
-                            PlaySoundEffect(SOUND_FLAP); //
+                    } else if (gameOverState == GAME_ACTIVE) {
+                        UpdateBird(myBird);
+                         if (IsKeyPressed(KEY_SPACE)) {
+                            myBird->speed = FLAP_STRENGTH;
+                            if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_FLAP);
                         }
-                        Pergerakan_pipa();  //
+                        Pergerakan_pipa();
 
-                        GameOverState prevState = gameOverState; //
-                        gameOverState = UpdateGameCollision(*myBird, plist, tplist); //
+                        GameOverState prevState = gameOverState;
+                        gameOverState = UpdateGameCollision(*myBird, plist, tplist);
 
                         if (prevState == GAME_ACTIVE && gameOverState == GAME_OVER) {
-                        // Karena suara tabrakan spesifik sudah dimainkan di collision.c,
-                        // di sini kita hanya perlu memainkan suara umum GAME_OVER jika ada.
-                            PlaySoundEffect(SOUND_GAME_OVER); // Mainkan suara umum "Game Over"
+                            if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_GAME_OVER);
                             printf(">> GAME OVER PADA SCORE: %d\n", score);
+                            AddScoreToLeaderboard(score);
+                            scoreSavedThisSession = true;
                         }
-
-                        if (prevState == GAME_ACTIVE && gameOverState == GAME_OVER) { //
-                            // Suara sudah dihandle di collision.c atau bisa di sini
-                            printf(">> GAME OVER PADA SCORE: %d\n", score); //
-                        }
-
-                        if (gameOverState == GAME_ACTIVE) { //
-                            address p_iter = plist->head; //
-                            while (p_iter != NULL) { //
+                        if (gameOverState == GAME_ACTIVE) {
+                            address p_iter = plist->head;
+                            while (p_iter != NULL) {
                                 float birdRightX = myBird->position.x + myBird->collisionWidth;
-                                float pipeBackX = p_iter->korx + LEBAR_PIPA; //
+                                float pipeBackX = p_iter->korx + LEBAR_PIPA;
 
-                                if (!p_iter->status && myBird->position.x > pipeBackX) { //
-                                    TambahSkor(); //
-                                    PlaySoundEffect(SOUND_SCORE); //
-                                    p_iter->status = 1; //
+                                if (!p_iter->status && myBird->position.x > pipeBackX) {
+                                    TambahSkor();
+                                    if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_SCORE);
+                                    p_iter->status = 1;
                                 }
-                                p_iter = p_iter->next; //
+                                p_iter = p_iter->next;
                             }
                         }
-                    } else { // GAME_OVER //
-                        if (!scoreSaved) { //
-                            SimpanHighscore(); //
-                            Pipa_berhenti(false); //
-                            scoreSaved = true; //
+                    } else { // GAME_OVER
+                        if (!scoreSavedThisSession) {
+                            SimpanHighscore(); // Fungsi lama untuk highscore tunggal
                         }
+                        Pipa_berhenti(false);
 
-                        if (IsKeyPressed(KEY_ENTER)) { //
-                            myBird->position.y = SCREEN_HEIGHT / 2.0f; //
-                            myBird->speed = 0; //
-                            freeList();
-                            Buat_pipa_linkedlist(); //
-                            ResetSkor(); //
-                            Pipa_berhenti(true); //
-                            scoreSaved = false; //
-                            gameOverState = GAME_READY; //
-                            jedapause(&tmblpause); //
-                        } else if (IsKeyPressed(KEY_BACKSPACE)) { //
-                            currentState = MENU; //
-                            menuMusicStarted = false; //
-                            Pipa_berhenti(true); //
-                            gameOverState = GAME_READY; //
+                        if (IsKeyPressed(KEY_ENTER)) {
+                            myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
+                            myBird->speed = 0;
+                            freeListPasangan();
+                            Buat_pipa_linkedlist();
+                            ResetSkor();
+                            Pipa_berhenti(true);
+                            scoreSavedThisSession = false; // Reset untuk sesi game baru
+                            gameOverState = GAME_READY;
+                            jedapause(&tmblpause);
+                        } else if (IsKeyPressed(KEY_BACKSPACE)) {
+                            currentState = MENU;
+                            // menuMusicStarted akan dihandle oleh logika di case MENU
+                            Pipa_berhenti(true);
+                            gameOverState = GAME_READY;
                         }
                     }
                 }
@@ -216,64 +217,72 @@ int main() {
         }
 
         // --- DRAWING ---
-        BeginDrawing(); //
-        ClearBackground(SKYBLUE); //
+        BeginDrawing();
+        ClearBackground(SKYBLUE);
 
-        if (currentState != BACKGROUND_SELECTION) {
-            LoopDrawSelectedBackground(backgroundSelector, &bgX); //
+        if (currentState != BACKGROUND_SELECTION && currentState != LEADERBOARD) {
+            LoopDrawSelectedBackground(backgroundSelector, &bgX);
+        } else if (currentState == LEADERBOARD) {
+            // Untuk leaderboard, kita gambar background yang sedang aktif (current) secara statis
+            if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
+                 DrawTexture(backgroundSelector->current->texture, 0, 0, WHITE); // Menggunakan current background
+            } else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) {
+                // Fallback ke background pertama jika current tidak valid (seharusnya tidak terjadi jika selector diinisialisasi dengan benar)
+                 DrawTexture(backgroundSelector->head->texture, 0, 0, WHITE);
+            } else {
+                // Fallback jika tidak ada background sama sekali
+                // Anda bisa membiarkan ClearBackground(SKYBLUE) saja atau gambar warna solid lain
+            }
         }
-        gambarAwan(awanList); //
+        gambarAwan(awanList);
 
         switch (currentState) {
             case MENU: {
-                setupMenu(); // Dari zakky.h, hanya menggambar UI menu
+                setupMenu();
             } break;
             case BACKGROUND_SELECTION: {
-                DrawBackgroundSelectionScreen(backgroundSelector); // Dari zakky.h
+                DrawBackgroundSelectionScreen(backgroundSelector);
+            } break;
+            case LEADERBOARD: {
+                DrawLeaderboardScreen(gameFont);
             } break;
             case GAMEPLAY: {
-                Gambar_pipa(score); //
-                DrawBird(myBird); //
+                Gambar_pipa(score);
+                DrawBird(myBird);
+                TampilkanSkor(gameFont);
 
-                char scoreTextVal[20]; //
-                sprintf(scoreTextVal, "Score: %d", score); //
-                DrawText(scoreTextVal, 10, 10, 30, BLACK); //
-
-                char highscoreTextVal[20]; //
-                sprintf(highscoreTextVal, "Best: %d", highscore); //
-                DrawText(highscoreTextVal, 10, 45, 25, DARKGRAY); //
-
-                if (gameOverState == GAME_READY && !tmblpause.isPause) { //
-                    const char* getReadyMsg = "GET READY!"; //
-                    const char* pressSpaceMsg = "Press SPACE to Start"; //
-                    DrawText(getReadyMsg, SCREEN_WIDTH / 2 - MeasureText(getReadyMsg, 40) / 2, SCREEN_HEIGHT / 2 - 60, 40, LIME); //
-                    DrawText(pressSpaceMsg, SCREEN_WIDTH / 2 - MeasureText(pressSpaceMsg, 25) / 2, SCREEN_HEIGHT / 2 - 10, 25, LIME); //
-                } else if (gameOverState == GAME_OVER && !tmblpause.isPause) { //
-                    DrawGameOver(SCREEN_WIDTH, SCREEN_HEIGHT, score); //
+                if (gameOverState == GAME_READY && !tmblpause.isPause) {
+                    const char* getReadyMsg = "GET READY!";
+                    const char* pressSpaceMsg = "Press SPACE to Start";
+                    DrawText(getReadyMsg, SCREEN_WIDTH / 2 - MeasureText(getReadyMsg, 40) / 2, SCREEN_HEIGHT / 2 - 60, 40, LIME);
+                    DrawText(pressSpaceMsg, SCREEN_WIDTH / 2 - MeasureText(pressSpaceMsg, 25) / 2, SCREEN_HEIGHT / 2 - 10, 25, LIME);
+                } else if (gameOverState == GAME_OVER && !tmblpause.isPause) {
+                    DrawGameOver(SCREEN_WIDTH, SCREEN_HEIGHT, score);
                 }
-
-                if (tmblpause.isPause) { //
-                    DrawPauseScreen(&tmblpause); //
-                }
+                if (tmblpause.isPause) { DrawPauseScreen(&tmblpause); }
             } break;
             default: break;
         }
-        EndDrawing(); //
+        EndDrawing();
     }
 
-    SimpanHighscore(); //
-    UnloadBird(myBird); //
-    UnloadBackgroundSelector(backgroundSelector); //
-    UnloadSounds(); //
-    if (IsAudioDeviceReady()) CloseAudioDevice(); //
-    freeAwan(&awanList); //
+    SimpanHighscore();
+    SaveLeaderboard();
 
-    freeList(); //
-    if (plist) free(plist); //
-    if (tplist) free(tplist); //
-    plist = NULL; //
-    tplist = NULL; //
+    UnloadBird(myBird);
+    UnloadBackgroundSelector(backgroundSelector);
+    if(IsAudioDeviceReady()) {
+        StopMenuMusic(); // <--- GANTI DARI StopMusicStream(menuMusic)
+        UnloadSounds();
+    }
+    if (IsAudioDeviceReady()) CloseAudioDevice();
+    freeAwan(&awanList);
+    freeListPasangan();
+    if (plist) free(plist);
+    if (tplist) free(tplist);
+    plist = NULL;
+    tplist = NULL;
 
-    CloseWindow(); //
+    CloseWindow();
     return 0;
 }
