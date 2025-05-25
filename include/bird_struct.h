@@ -3,17 +3,11 @@
 
 #include "raylib.h"
 
-typedef struct Bird {
+// ======================== Struktur untuk Burung ========================
+typedef struct {
     Texture2D texture;
     Vector2 position;
     float speed;
 } Bird;
-
-typedef struct BirdNode {
-    float y;
-    float speed;
-    struct BirdNode* prev;
-    struct BirdNode* next;
-} BirdNode;
 
 #endif
