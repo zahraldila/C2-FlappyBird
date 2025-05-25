@@ -8,8 +8,8 @@
 
 
 // Di luar fungsi (global scope)
-Singlelinkedlist *plist = NULL;
-Singlelinkedlist *tplist = NULL;
+//Singlelinkedlist *plist = NULL;
+//Singlelinkedlist *tplist = NULL;
 int Gerak[3];
 Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};

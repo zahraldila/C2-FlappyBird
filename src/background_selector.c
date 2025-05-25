@@ -3,11 +3,11 @@
 #include <string.h>
 
 const char* backgroundPaths[] = {
-    "assets/bg1.png",
-    "assets/bg2.png",
-    "assets/bg3.png",
-    "assets/bg4.png",
-    "assets/bg5.png"
+    "assets/background/nature_1.png",
+    "assets/background/nature_2.png",
+    "assets/background/nature_3.png",
+    "assets/background/nature_4.png",
+    "assets/background/nature_5.png"
 };
 
 #define BACKGROUND_SPEED 2.0f

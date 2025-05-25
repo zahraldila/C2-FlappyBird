@@ -23,7 +23,7 @@ extern Singlelinkedlist *tplist;
 
 void Buat_pipa();
 void Pergerakan_pipa();
-void Gambar_pipa();
+void Gambar_pipa(int s);
 void Pipa_naik_turun();
 void Munculkan_Pipa();
 void Pipa_berhenti(bool cek);

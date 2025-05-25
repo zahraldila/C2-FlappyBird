@@ -8,6 +8,7 @@ typedef struct {
     Texture2D texture;
     Vector2 position;
     float speed;
+    float scale;
 } Bird;
 
 #endif

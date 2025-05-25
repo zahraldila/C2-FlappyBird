@@ -7,6 +7,8 @@
 #define JUMLAH_AWAN 5
 extern float bgX;
 
+#define LEBAR_LAYAR 800
+
 Bird CreateBird(float x, float y, const char *texturePath, float scale);
 
 typedef enum {

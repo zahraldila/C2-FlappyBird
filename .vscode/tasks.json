@@ -16,6 +16,7 @@
                 "src/sound.c",
                 "src/Pipa.c",
                 "src/PipaLinkedList.c",
+                "src/background_selector.c",
                 "-I", "./include",
                 "-I", "C:/raylib-5.5_win64_mingw-w64/include",
                 "-L", "C:/raylib-5.5_win64_mingw-w64/lib",
