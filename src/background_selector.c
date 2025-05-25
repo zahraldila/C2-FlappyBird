@@ -10,7 +10,7 @@ const char* backgroundPaths[] = {
     "assets/background/nature_5.png"
 };
 
-#define BACKGROUND_SPEED 2.0f
+#define BACKGROUND_SPEED 0.5f
 
 BackgroundSelector* InitBackgroundSelector() {
     BackgroundSelector* selector = (BackgroundSelector*)malloc(sizeof(BackgroundSelector));

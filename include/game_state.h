@@ -14,4 +14,6 @@ void HandleGameplayState(GameState *currentState, GameOverState *gameOverState, 
 void RenderGameState(GameState currentState, GameOverState gameOverState, Bird *bird, Singlelinkedlist *plist, Singlelinkedlist *tplist);
 void ResetGame(Bird *bird, Singlelinkedlist *plist, Singlelinkedlist *tplist); 
 
+void DrawGameOver(int screenWidth, int screenHeight, int currentScore);
+
 #endif

@@ -11,6 +11,7 @@
                 "src/bird.c",
                 "src/main_menu.c",
                 "src/collision.c",
+                "src/game_state.c",
                 "src/score.c",
                 "src/background.c",
                 "src/sound.c",
