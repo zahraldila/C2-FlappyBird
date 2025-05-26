@@ -9,74 +9,74 @@ static Rectangle backButtonRec_BgSelect = { 20, 20, 150, 40 };
 static Rectangle backButtonRec_Leaderboard = { 20, 20, 150, 40 };
 
 
-void setupMenu() {
-    DrawText("Flappy Bird", LEBAR_LAYAR / 2 - MeasureText("Flappy Bird", 60) / 2, 50, 60, YELLOW);
+void setupMenu() 
+{
+    GameState state = MENU;
 
-    float buttonWidth = 250;
-    float buttonHeight = 50;
-    float spacing = 10; // Jarak antar tombol
-    float startY = 150;
-    float currentY = startY;
+    DrawText("Flappy Bird", LEBAR_LAYAR / 2 - 170, 100, 60, YELLOW);
 
-    Rectangle startButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
+    // Gambar tombol "START"
+    Rectangle startButton = { LEBAR_LAYAR / 3 - 100, 250, 200, 50 };
     DrawRectangleRec(startButton, BLUE);
-    DrawText("START GAME", startButton.x + startButton.width / 2 - MeasureText("START GAME", 20) / 2, startButton.y + 15, 20, WHITE);
-    currentY += buttonHeight + spacing;
+    DrawText("START", LEBAR_LAYAR / 3 - 40, 265, 20, WHITE);
 
-    Rectangle bckButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
+    Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
+    DrawRectangleRec(scoreButton, BLUE);
+    DrawText("Leaderboard", LEBAR_LAYAR / 2 + 40, 265, 20, WHITE);
+ 
+    // Gambar tombol "EXIT"
+    Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
     DrawRectangleRec(bckButton, BLUE);
-    DrawText("CHOOSE BACKGROUND", bckButton.x + bckButton.width/2 - MeasureText("CHOOSE BACKGROUND",20)/2, bckButton.y + 15, 20, WHITE);
-    currentY += buttonHeight + spacing;
+    DrawText("choose background", LEBAR_LAYAR / 5 + 5 , 335, 20, WHITE);
 
-    Rectangle skinButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
+    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
     DrawRectangleRec(skinButton, BLUE);
-    DrawText("CHOOSE SKIN", skinButton.x + skinButton.width/2 - MeasureText("CHOOSE SKIN",20)/2, skinButton.y + 15, 20, WHITE);
-    currentY += buttonHeight + spacing;
+    DrawText("choose skin", LEBAR_LAYAR / 2 + 35, 335, 20, WHITE);   
 
-    Rectangle scoreButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
-    DrawRectangleRec(scoreButton, DARKBLUE); // Warna beda untuk tombol aktif
-    DrawText("LEADERBOARD", scoreButton.x + scoreButton.width/2 - MeasureText("LEADERBOARD",20)/2, scoreButton.y + 15, 20, WHITE);
-    currentY += buttonHeight + spacing;
-
-    Rectangle exitButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
+    Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 190, 50 };
     DrawRectangleRec(exitButton, RED);
-    DrawText("EXIT GAME", exitButton.x + exitButton.width / 2 - MeasureText("EXIT GAME", 20) / 2, exitButton.y + 15, 20, WHITE);
+    DrawText("EXIT", LEBAR_LAYAR / 2 - 50, 390, 20, WHITE);   
+
 }
 
-GameState pilihMenu() {
+GameState pilihMenu() 
+{
     GameState nextState = MENU;
     Vector2 mousePoint = GetMousePosition();
+ 
+    Rectangle startButton = { LEBAR_LAYAR / 3 - 100, 250, 200, 50 };
+    Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 200, 50 };
+    Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
+    Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
+    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
 
-    float buttonWidth = 250;
-    float buttonHeight = 50;
-    float spacing = 10;
-    float startY = 150;
-    float currentY = startY;
 
-    Rectangle startButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
-    currentY += buttonHeight + spacing;
-    Rectangle bckButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
-    currentY += buttonHeight + spacing;
-    Rectangle skinButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
-    currentY += buttonHeight + spacing;
-    Rectangle scoreButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
-    currentY += buttonHeight + spacing;
-    Rectangle exitButton = { LEBAR_LAYAR / 2 - buttonWidth / 2, currentY, buttonWidth, buttonHeight };
-
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mousePoint, startButton)) nextState = GAMEPLAY;
-        if (CheckCollisionPointRec(mousePoint, bckButton)) nextState = BACKGROUND_SELECTION;
-        if (CheckCollisionPointRec(mousePoint, skinButton)) {
-            // nextState = SKIN;
-            TraceLog(LOG_INFO, "Tombol CHOOSE SKIN ditekan (placeholder).");
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) 
+    {
+        if (CheckCollisionPointRec(mousePoint, startButton)) 
+        {
+            nextState = GAMEPLAY;
         }
-        if (CheckCollisionPointRec(mousePoint, scoreButton )) {
-            nextState = LEADERBOARD; // Arahkan ke state leaderboard
-            LoadLeaderboard(); // Muat data leaderboard saat tombol ditekan
+        if (CheckCollisionPointRec(mousePoint, bckButton)) 
+        {
+            nextState = BACKGROUND_SELECTION;
         }
-        if (CheckCollisionPointRec(mousePoint, exitButton)) {
+        if (CheckCollisionPointRec(mousePoint, scoreButton)) 
+        {
+            nextState = LEADERBOARD;
+            LoadLeaderboard();
+        }
+
+        if (CheckCollisionPointRec(mousePoint, exitButton)) 
+        {
             TraceLog(LOG_INFO, "Tombol EXIT ditekan. Menutup window.");
             CloseWindow();
+            exit(0);
+        }
+
+        if (CheckCollisionPointRec(mousePoint, skinButton)) 
+        {
+            TraceLog(LOG_INFO, "Tombol CHOOSE SKIN ditekan (placeholder).");
         }
     }
     return nextState;
@@ -123,7 +123,7 @@ void DrawBackgroundSelectionScreen(BackgroundSelector *bgSelector) {
     const char *titleText = "PILIH BACKGROUND";
     DrawText(titleText, GetScreenWidth()/2 - MeasureText(titleText, 40)/2, 30, 40, YELLOW);
     DrawRectangle(0, GetScreenHeight() - 70, GetScreenWidth(), 70, Fade(BLACK, 0.5f));
-    DrawText("KIRI/KANAN: Ganti | ENTER: Pilih | BACKSPACE: Kembali", 50, GetScreenHeight() - 55, 20, RAYWHITE);
+    DrawText("KIRI/KANAN: Ganti | ENTER: Pilih & Kembali", 50, GetScreenHeight() - 55, 20, RAYWHITE);
     DrawRectangleRec(backButtonRec_BgSelect, Fade(DARKBLUE, 0.7f));
     DrawText("KEMBALI", backButtonRec_BgSelect.x + backButtonRec_BgSelect.width/2 - MeasureText("KEMBALI", 20)/2, backButtonRec_BgSelect.y + 10, 20, WHITE);
 }
@@ -136,7 +136,7 @@ void InitLeaderboardScreen() {
 
 GameState UpdateLeaderboardScreen(GameState currentGameState) {
     GameState nextState = currentGameState;
-    if (IsKeyPressed(KEY_BACKSPACE) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backButtonRec_Leaderboard))) {
+    if ((IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backButtonRec_Leaderboard))) {
         nextState = MENU;
     }
     return nextState;

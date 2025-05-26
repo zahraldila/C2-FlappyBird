@@ -5,7 +5,7 @@
 #include "bird_struct.h"
 #include "dava.h"
 
-#define KECEPATAN_AWAN 1
+#define KECEPATAN_AWAN 1.5f
 #define JUMLAH_AWAN 5
 #define KECEPATAN_BACKGROUND_SCROLL 0.5f
 

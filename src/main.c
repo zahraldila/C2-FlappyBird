@@ -227,6 +227,7 @@ int main() {
                                 myBird->speed = 0;
                                 Hapus_semua_pipa();
                                 Buat_pipa();
+
                                 ResetSkor();
                                 Pipa_berhenti(true);
                                 scoreAddedToLeaderboardThisSession = false;
