@@ -83,12 +83,8 @@ void Gambar_pipa(int s) {
 
 
 void Hapus_semua_pipa(){
-    if(plist != NULL && tplist != NULL){
-        freeList();
-        free(plist);
-        free(tplist);
-        plist = NULL;
-        tplist = NULL;
+    if (plist != NULL && tplist != NULL){ 
+    freeList();
     }
 }
 
