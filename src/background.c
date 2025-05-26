@@ -1,41 +1,79 @@
 #include "Alexandrio.h"
 #include "zakky.h"
+#include "raylib.h"
 #include <stdlib.h>
+#include <stdio.h>
 
-int Awan[3][2]; // [x, y]
-void Buat_awan(int Awan[3][2]) 
+AwanNode* createAwan(float x, float y) 
 {
-    int i = 0;
-    while (i < 3)
-    {
-        Awan[i][0] = LEBAR_LAYAR + (i * 200); // Awalnya di luar layar
-        Awan[i][1] = rand() % 100; // Posisi y acak di bagian atas layar
-        i++;
-    }
+    AwanNode *nodeBaru = (AwanNode *)malloc(sizeof(AwanNode));
+    nodeBaru->x = x;
+    nodeBaru->y = y;
+    nodeBaru->next = NULL;
+
+    return nodeBaru;
 }
 
-void Pergerakan_awan(int Awan[3][2]) 
+void insertAwan(AwanNode **head, float x, float y)
 {
-    int i = 0;
-    while (i < 3)
+    AwanNode *nodeBaru = createAwan(x,y);
+    if (*head == NULL)
     {
-        Awan[i][0] -= KECEPATAN_AWAN; // Geser awan ke kiri
-        if (Awan[i][0] + 50 < 0) 
-        { // Jika awan keluar layar, pindahkan ke kanan
-            Awan[i][0] = LEBAR_LAYAR;
-            Awan[i][1] = rand() % 100;
+        *head = nodeBaru;
+    }
+    else
+    {
+        AwanNode *temp = *head;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
         }
-        i++;   
-    }   
-}
-
-void Gambar_awan(int Awan[3][2]) {
-    for (int i = 0; i < 3; i++) {
-        DrawCircle(Awan[i][0], Awan[i][1], 20, LIGHTGRAY);
-        DrawCircle(Awan[i][0] + 15, Awan[i][1] + 5, 15, LIGHTGRAY);
-        DrawCircle(Awan[i][0] - 15, Awan[i][1] + 5, 15, LIGHTGRAY);
+        temp->next = nodeBaru;
     }
 }
+
+void updateAwan(AwanNode *head) 
+{
+    AwanNode *temp = head;
+    while (temp != NULL) 
+    {
+        temp->x -= KECEPATAN_AWAN;
+
+        if (temp->x < -40) 
+        { 
+            temp->x =  LEBAR_LAYAR + 20;
+            temp->y = rand() % (TINGGI_LAYAR / 2);
+
+            printf("Awan direset ke posisi (%.0f, %.0f)\n", temp->x, temp->y);
+        }
+        temp = temp->next;
+    }
+}
+
+void gambarAwan(AwanNode *head)
+{
+    AwanNode *temp = head;
+    while (temp != NULL)
+    {
+        DrawCircle(temp->x, temp->y, 20, WHITE);
+        DrawCircle(temp->x + 15, temp->y + 5, 15, WHITE);
+        DrawCircle(temp->x - 15, temp->y + 5, 15, WHITE);
+        temp = temp->next;
+    }
+}
+
+void freeAwan(AwanNode **head)
+{
+    AwanNode *temp = *head;
+    while (temp != NULL)
+    {
+        AwanNode *toDelete = temp;
+        temp = temp->next;
+        free(toDelete);
+    }
+    *head = NULL;
+}
+
 
 
 
