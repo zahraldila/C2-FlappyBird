@@ -1,171 +1,175 @@
 #include "raylib.h"
-#include "Alexandrio.h" // Untuk konstanta LEBAR_LAYAR, TINGGI_LAYAR, dll.
-#include "qlio.h"       // Untuk 'score'
-#include "pipa_ll.h"    // Untuk address, dll.
+#include "Alexandrio.h"
+#include "qlio.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
-#include <stdio.h>      // Untuk TraceLog via raylib
 
-// plist dan tplist global, di-extern dari Alexandrio.h, didefinisikan di PipaLinkedList.c
 
-int Gerak[3]; // Untuk 3 pasang pipa yang didaur ulang
+
+// Di luar fungsi (global scope)
+Singlelinkedlist *plist = NULL;
+Singlelinkedlist *tplist = NULL;
+int Gerak[3];
 Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};
 bool Stop = true;
 
-// Fungsi utilitas untuk menghasilkan tinggi pipa atas yang valid
-int generateValidPipeHeight() {
-    int minHeight = 75;
-    int maxHeight = TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 75; // Memastikan ada ruang untuk pipa bawah & celah
-    if (minHeight >= maxHeight) { // Jika layar terlalu kecil atau jarak pipa terlalu besar
-        return TINGGI_LAYAR / 3; // Nilai aman default
+void Buat_pipa() {
+    for(int i = 0; i < 3; i++) {
+        address newNodePipa = buatNodePipa(i);
+        address newNodeTPipa = buatNodeTPipa(i, newNodePipa->tinggi);
+        // Simpan gerakan awal 
+        Gerak[i] = (rand() % 2) ? 1 : 0;
+        insertBelakang(newNodePipa, newNodeTPipa);
     }
-    int randomHeight = rand() % (maxHeight - minHeight + 1) + minHeight;
-    return randomHeight;
-}
-
-void Buat_pipa_linkedlist() {
-    if (!plist || !tplist) {
-        TraceLog(LOG_ERROR, "PIPA: plist atau tplist belum dialokasi saat Buat_pipa_linkedlist!");
-        return;
-    }
-    // freeListPasangan(); // PENTING: Pastikan ini dipanggil SEBELUM Buat_pipa_linkedlist
-                        // di main.c atau game_state.c setiap kali game direset/dimulai.
-
-    int initial_pipe_count = 0;
-    for(int i = 0; i < 3; i++) { // Membuat 3 pasang pipa awal
-        int tinggi_pipa_atas = generateValidPipeHeight();
-
-        address newNodePipa = buatNodePipaGenerik(tinggi_pipa_atas);
-        if (!newNodePipa) continue; // Lewati jika gagal
-        newNodePipa->korx = LEBAR_LAYAR + i * 300; // Jarak antar pipa awal 300
-
-        address newNodeTPipa = buatNodePipaGenerik(tinggi_pipa_atas); // Data tinggi di tplist bisa jadi tidak krusial jika p->tinggi yang dipakai
-        if (!newNodeTPipa) {
-            free(newNodePipa);
-            continue;
-        }
-        newNodeTPipa->korx = newNodePipa->korx; // korx sama
-
-        Gerak[i] = (rand() % 2);
-        insertBelakangPasangan(newNodePipa, newNodeTPipa);
-        initial_pipe_count++;
-    }
-    // TraceLog(LOG_INFO, "PIPA: %d pasang pipa awal dibuat.", initial_pipe_count);
 }
 
 void Pergerakan_pipa(){
-    if (!plist || !plist->head) return; // Tidak ada pipa untuk digerakkan
+    address p = plist->head;
+    address t = tplist->head;
 
-    // 1. Gerakkan semua pipa yang ada
-    address current_p = plist->head;
-    address current_t = (tplist && tplist->head) ? tplist->head : NULL;
-    while (current_p != NULL) {
-        current_p->korx -= KECEPATAN_PIPA;
-        if (current_t) {
-            current_t->korx = current_p->korx; // Pastikan korx tplist sinkron
-            current_t = current_t->next;
-        }
-        current_p = current_p->next;
-    }
+    while (p != NULL && t != NULL) {
+        p->korx -= KECEPATAN_PIPA;
+        t->korx -= KECEPATAN_PIPA;
 
-    // 2. Cek apakah pipa paling depan sudah keluar layar
-    //    Jika ya, hapus dan tambahkan yang baru di belakang.
-    //    Ini menjaga jumlah pipa tetap (misalnya 3 pasang).
-    current_p = plist->head; // Kembali ke head untuk cek
-    if (current_p != NULL && (current_p->korx + LEBAR_PIPA < 0)) {
-        deleteFirstPasangan(); // Hapus pasangan pipa terdepan
-
-        int tinggi_pipa_atas_baru = generateValidPipeHeight();
-        address newPipaNode = buatNodePipaGenerik(tinggi_pipa_atas_baru);
-        if (!newPipaNode) {
-            TraceLog(LOG_ERROR, "PIPA: Gagal membuat newPipaNode saat daur ulang!");
-            return;
-        }
-        address newTPipaNode = buatNodePipaGenerik(tinggi_pipa_atas_baru);
-        if (!newTPipaNode) {
-            free(newPipaNode);
-            TraceLog(LOG_ERROR, "PIPA: Gagal membuat newTPipaNode saat daur ulang!");
-            return;
+        if (p->korx + LEBAR_PIPA < 0) {
+            deleteFirst();
+            address newNodePipa = buatNodePipa(0); 
+            address newNodeTPipa = buatNodeTPipa(0, newNodePipa->tinggi);
+            insertBelakang(newNodePipa, newNodeTPipa);
+            return; 
         }
 
-        // Tentukan korx pipa baru berdasarkan pipa terakhir yang ADA di list
-        if (plist->tail != NULL) {
-            newPipaNode->korx = plist->tail->korx + 300; // Jarak 300 dari pipa terakhir
-        } else {
-            // Jika list kebetulan kosong (seharusnya tidak terjadi jika selalu daur ulang dari 3 pipa)
-            newPipaNode->korx = LEBAR_LAYAR; // Posisi default pipa pertama
-        }
-        newTPipaNode->korx = newPipaNode->korx; // Samakan korx
-
-        // Daur ulang status gerakan untuk array 'Gerak'
-        // Ini asumsi ada 3 pipa yang dilacak status geraknya
-        Gerak[0] = Gerak[1];
-        Gerak[1] = Gerak[2];
-        Gerak[2] = rand() % 2; // Status gerak acak untuk pipa baru
-
-        insertBelakangPasangan(newPipaNode, newTPipaNode);
-        // TraceLog(LOG_DEBUG, "PIPA: Pipa didaur ulang. Korx baru: %d", newPipaNode->korx);
+        p = p->next;
+        t = t->next;
     }
 }
 
+
 void Gambar_pipa(int s) {
-    // DEBUG: Hitung jumlah node di plist untuk ditampilkan di layar
-    int node_count = 0;
-    if (plist) {
-        address iter_count = plist->head;
-        while (iter_count != NULL) {
-            node_count++;
-            iter_count = iter_count->next;
-        }
-    }
-    // DrawText(TextFormat("Pipes in list: %d", node_count), 10, SCREEN_HEIGHT - 25, 20, BLACK);
-
-    if (!plist || !plist->head) return;
-
     address p = plist->head;
-    int pipa_idx_gerak = 0;
+    address t = tplist->head;
+    int i = 0;
 
-    float tutup_lebar_visual = LEBAR_PIPA + 20;
-    float tutup_tinggi_visual = 30;
-    float tutup_offset_x = (LEBAR_PIPA - tutup_lebar_visual) / 2.0f;
-
-    while(p != NULL) {
-        if (pipa_idx_gerak < 3 && s > 14 && Stop) {
-            if (Gerak[pipa_idx_gerak] == 0) {
-                p->tinggi += 1;
-                if (p->tinggi >= TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 75 - tutup_tinggi_visual) {
-                    p->tinggi = TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 75 - tutup_tinggi_visual;
-                    Gerak[pipa_idx_gerak] = 1;
+    while(p != NULL && t != NULL) {
+        if(s > 14 && Stop) {
+            // Update posisi naik turun per node
+            if (Gerak[i] == 0) {
+                p->tinggi += 1; 
+                if (p->tinggi >= TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 50) {
+                    Gerak[i] = 1;
                 }
             } else {
                 p->tinggi -= 1;
-                if (p->tinggi <= 75 + tutup_tinggi_visual) {
-                    p->tinggi = 75 + tutup_tinggi_visual;
-                    Gerak[pipa_idx_gerak] = 0;
+                if (p->tinggi <= 50) {
+                    Gerak[i] = 0;
                 }
             }
         }
 
-        // PIPA ATAS (p->tinggi adalah tinggi visual pipa atas)
+        // Gambar setiap pipa
         DrawRectangle(p->korx, 0, LEBAR_PIPA, p->tinggi, GREEN);
-        DrawRectangle(p->korx + tutup_offset_x, p->tinggi - tutup_tinggi_visual, tutup_lebar_visual, tutup_tinggi_visual, DARKGREEN);
-
-        // PIPA BAWAH
-        float y_pipa_bawah_mulai = p->tinggi + JARAK_PIPA_ATAS_BAWAH;
-        float tinggi_pipa_bawah_visual = TINGGI_LAYAR - y_pipa_bawah_mulai;
-        DrawRectangle(p->korx, y_pipa_bawah_mulai, LEBAR_PIPA, tinggi_pipa_bawah_visual, GREEN);
-        DrawRectangle(p->korx + tutup_offset_x, y_pipa_bawah_mulai, tutup_lebar_visual, tutup_tinggi_visual, DARKGREEN);
-
+        DrawRectangle(t->korx, p->tinggi - 30, LEBAR_PIPA + 20, 30, GREEN);
+        DrawRectangle(p->korx, p->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - p->tinggi - JARAK_PIPA_ATAS_BAWAH, GREEN);
+        DrawRectangle(t->korx, p->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA + 20, 30, GREEN);
         p = p->next;
-        pipa_idx_gerak = (pipa_idx_gerak + 1) % 3; // Untuk array Gerak
+        t = t->next;
+        i++;
     }
-
-    DrawRectangle(0, TINGGI_LAYAR - 30, LEBAR_LAYAR, 30, TANAH);
-    DrawRectangle(0, TINGGI_LAYAR - 30 - 10, LEBAR_LAYAR, 10, RUMPUT);
+    DrawRectangle(0, 420, LEBAR_LAYAR, 100, TANAH);
+    DrawRectangle(0, 420, LEBAR_LAYAR, 10, RUMPUT);
 }
 
-void Pipa_berhenti(bool cek){
-    Stop = cek;
+
+void Hapus_semua_pipa(){
+    if(plist != NULL && tplist != NULL){
+        freeList();
+        free(plist);
+        free(tplist);
+        plist = NULL;
+        tplist = NULL;
+    }
 }
+
+void Pipa_berhenti(bool Cek){
+    Stop = Cek;
+}
+
+
+
+
+
+
+
+// Color TANAH = {240, 164, 0 , 255};
+// Color RUMPUT = {0, 150, 0 , 255};
+// int Pipa[3][3], TutupPipa[3][3], Gerak[3];
+// bool Stop = true;
+// void Buat_pipa(int Pipa[3][3], int TutupPipa[3][3]){
+//     for(int i = 0; i < 3; i++){
+//         Pipa[i][0] = (LEBAR_LAYAR + i * 300) + 10;
+//         Pipa[i][1] = rand() % (TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 150) + 50;
+//         Pipa[i][2] = 0;
+//         TutupPipa[i][0] = (LEBAR_LAYAR + i * 300);
+//         TutupPipa[i][1] = Pipa[i][2];
+//         TutupPipa[i][2] = 0;
+//         Gerak[i] = (rand()% 2) ? 1 : 0;
+//     }   
+// }
+
+// void Pergerakan_pipa(int Pipa[3][3], int TutupPipa[3][3]){
+//     for(int i = 0; i < 3; i++){
+//         Pipa[i][0] -= KECEPATAN_PIPA;
+//         TutupPipa[i][0] -= KECEPATAN_PIPA;
+//         if(Pipa[i][0] + LEBAR_PIPA < 0){
+//             Pipa[i][0] = LEBAR_LAYAR + 20;
+//             Pipa[i][1] = rand() % (TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 150) + 50;
+//             Pipa[i][2] = 0;   
+//         }
+//         if(TutupPipa[i][0] + LEBAR_PIPA + 20 < 0){
+//             TutupPipa[i][0] = LEBAR_LAYAR;
+//             TutupPipa[i][1] = Pipa[i][2];
+//             TutupPipa[i][2] = 0;
+//         }
+//     }
+// }
+
+
+// void Gambar_pipa(int Pipa[3][3], int TutupPipa[3][3], int s){
+//     for(int i = 0; i < 3; i++){
+//             if(s > 14 && Stop){
+//                 Pipa_naik_turun(i);
+//             }    
+//             Munculkan_Pipa(i);
+//     }
+// }
+
+// void Pipa_naik_turun(int i){    
+//     if (Gerak[i] == 0) {
+//         Pipa[i][1] += 1; 
+//         if (Pipa[i][1] >= TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 50) {
+//             Gerak[i] = 1; // Ubah arah jadi naik
+//         }
+//     } else { 
+//         Pipa[i][1] -= 1; 
+//         if (Pipa[i][1] <= 50) {
+//             Gerak[i] = 0; // Ubah arah jadi turun
+//         }
+//     }
+// }
+
+// void Munculkan_Pipa(int i){
+//     for(i ; i < 3; i ++){
+//         DrawRectangle(Pipa[i][0], 0, LEBAR_PIPA, Pipa[i][1], GREEN);
+//         DrawRectangle(TutupPipa[i][0], Pipa[i][1] - 30, LEBAR_PIPA + 20, 30, GREEN);
+//         DrawRectangle(Pipa[i][0], Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - Pipa[i][1] - JARAK_PIPA_ATAS_BAWAH, GREEN);
+//         DrawRectangle(TutupPipa[i][0], Pipa[i][1] + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA + 20, 30, GREEN);    
+//         DrawRectangle(0, 420, LEBAR_LAYAR, 100, TANAH);
+//         DrawRectangle(0, 420, LEBAR_LAYAR, 10, RUMPUT);
+//     }
+// }
+
+// void Pipa_berhenti(bool Cek){
+//     Stop = Cek;
+// }

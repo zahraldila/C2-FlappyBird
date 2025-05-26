@@ -4,6 +4,7 @@
 #include "raylib.h"
 
 #define MAX_LEADERBOARD_ENTRIES 5 // Jumlah skor yang disimpan di leaderboard
+#define MAX_PLAYER_NAME_LENGTH 6 
 
 extern int score;
 extern int highscore; // highscore tunggal masih bisa dipertahankan untuk tampilan cepat

@@ -4,25 +4,30 @@
 #include "pipa_ll.h"
 #include "raylib.h"
 
+
 #define LEBAR_LAYAR 800
 #define TINGGI_LAYAR 450
-#define LEBAR_PIPA 80 // Pastikan ini adalah lebar visual badan pipa utama
+#define LEBAR_PIPA 80
 #define JARAK_PIPA_ATAS_BAWAH 150
 #define KECEPATAN_PIPA 2
-#define SCREEN_HEIGHT 450 // Konsisten dengan TINGGI_LAYAR
-#define SCREEN_WIDTH 800  // Konsisten dengan LEBAR_LAYAR
+#define SCREEN_HEIGHT 450
+#define SCREEN_WIDTH 800
 
 extern Color TANAH;
 extern Color RUMPUT;
+// extern int Pipa[3][3];
+// extern int TutupPipa[3][3];
 extern Singlelinkedlist *plist;
 extern Singlelinkedlist *tplist;
 
-// Deklarasi fungsi disesuaikan
-void Buat_pipa_linkedlist(void); // Diubah dari Buat_pipa()
-void Pergerakan_pipa(void);
-void Gambar_pipa(int s);
-// void Pipa_naik_turun(); // Tidak dideklarasikan di sini, logika ada di Gambar_pipa
-// void Munculkan_Pipa(); // Tidak dideklarasikan di sini, logika ada di Gambar_pipa
-void Pipa_berhenti(bool cek);
 
-#endif //ALEXANDRIO_H
+void Buat_pipa();
+void Pergerakan_pipa();
+void Gambar_pipa(int s);
+void Pipa_naik_turun();
+void Munculkan_Pipa();
+void Pipa_berhenti(bool cek);
+void Hapus_semua_pipa();
+
+
+#endif //ALEXANDRIO_H   
