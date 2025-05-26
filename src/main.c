@@ -90,8 +90,8 @@ int main() {
         CloseWindow();
         return 1;
     }
-    initList(plist);
-    initList(tplist);
+    initPipaList();
+    
     // Buat_pipa_linkedlist() akan dipanggil saat transisi ke GAMEPLAY
 
     Font gameFont = GetFontDefault();
@@ -135,8 +135,8 @@ int main() {
                         }
                         myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
                         myBird->speed = 0;
-                        freeListPasangan();
-                        Buat_pipa_linkedlist();
+                        Hapus_semua_pipa();
+                        Buat_pipa();
                         ResetSkor();
                         Pipa_berhenti(true);
                         jedapause(&tmblpause);
@@ -225,8 +225,8 @@ int main() {
                                 if (myBird == NULL || myBird->texture.id == 0) { currentState = MENU; break; }
                                 myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
                                 myBird->speed = 0;
-                                freeListPasangan();
-                                Buat_pipa_linkedlist();
+                                Hapus_semua_pipa();
+                                Buat_pipa();
                                 ResetSkor();
                                 Pipa_berhenti(true);
                                 scoreAddedToLeaderboardThisSession = false;
@@ -379,11 +379,7 @@ int main() {
     }
     if (IsAudioDeviceReady()) CloseAudioDevice();
     freeAwan(&awanList);
-    freeListPasangan();
-    if (plist) free(plist);
-    if (tplist) free(tplist);
-    plist = NULL;
-    tplist = NULL;
+    Hapus_semua_pipa();
 
     CloseWindow();
     return 0;

@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Iraylib/include -Iinclude
 LDFLAGS = -Lraylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm
 OUTPUT = build/game.exe
-SRC = src/main.c src/bird.c src/main_menu.c src/Pipa.c src/PipaLinkedList.c src/collision.c src/score.c src/sound.c src/background.c src/background_selector.c src/game_state.c
+SRC = src/main.c src/bird.c src/main_menu.c src/Pipa.c src/PipaLinkedList.c src/collision.c src/score.c src/sound.c src/background.c src/background_selector.c src/game_init.c src/game_state.c
 
 build: $(SRC)
 	@if not exist build mkdir build

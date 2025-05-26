@@ -1,87 +1,88 @@
-#include "Alexandrio.h" // Untuk konstanta
-#include "pipa_ll.h"
+#include "Alexandrio.h"
 #include <stdlib.h>
-#include <stdio.h>    // Untuk TraceLog via raylib atau printf standar
+#include <stdio.h>
 
-// Definisi variabel global plist dan tplist
-Singlelinkedlist *plist = NULL;
-Singlelinkedlist *tplist = NULL;
+void initPipaList(){
+    initList(plist);
+    initList(tplist);
+}
 
-void initList(Singlelinkedlist *L){
-    if (L == NULL) {
-        // TraceLog(LOG_WARNING, "PIPA_LL: Mencoba initList pada List NULL.");
-        return;
-    }
+void initList(Singlelinkedlist *L){    
     L->head = NULL;
     L->tail = NULL;
 }
 
-address buatNodePipaGenerik(int tinggi_pipa_atas){
+address buatNodePipa(int i){
     address newNode = (address)malloc(sizeof(Node));
-    if (newNode == NULL) {
-        TraceLog(LOG_ERROR, "PIPA_LL: Gagal alokasi memori untuk Node Pipa!");
-        return NULL;
-    }
-    newNode->tinggi = tinggi_pipa_atas; // korx diisi nanti
+    newNode->korx = (LEBAR_LAYAR + i * 300) + 10;
+    newNode->tinggi = rand() % (TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 150) + 50 ;
+    newNode->status = 0;
+    newNode->next = NULL;
+    return newNode;
+}
+address buatNodeTPipa(int i, int tinggi){
+    address newNode = (address)malloc(sizeof(Node));
+    newNode->korx = (LEBAR_LAYAR + i * 300);
+    newNode->tinggi = tinggi;
     newNode->status = 0;
     newNode->next = NULL;
     return newNode;
 }
 
-// Fungsi internal untuk satu list
-void insertBelakang(Singlelinkedlist *list, address newNode) {
-    if (list == NULL || newNode == NULL) return;
-    if(list->head == NULL){
-        list->head = list->tail = newNode;
-    } else {
-        list->tail->next = newNode;
-        list->tail = newNode;
-    }
+
+void insertBelakang(address newNodePipa, address newNodeTPipa) {
+if(plist->head == NULL && tplist->head == NULL){
+    plist->head = plist->tail = newNodePipa;
+    tplist->head = tplist->tail = newNodeTPipa;
+} else {
+    plist->tail->next = newNodePipa;
+    plist->tail = newNodePipa;
+
+    tplist->tail->next = newNodeTPipa;
+    tplist->tail = newNodeTPipa;
+}
 }
 
-void deleteFirst(Singlelinkedlist *list){
-    if (list == NULL || list->head == NULL) return;
-    address tempNode = list->head;
-    list->head = list->head->next;
-    if(list->head == NULL) {
-        list->tail = NULL;
+
+void deleteFirst(){
+    if(plist->head == NULL || tplist->head == NULL){
+        printf("List kosong, tidak bisa dihapus.\n");
+        return;
     }
-    free(tempNode);
+
+    // Hapus node dari plist
+    address tempPipa = plist->head;
+    plist->head = plist->head->next;
+    if(plist->head == NULL) {
+        plist->tail = NULL;
+    }
+    free(tempPipa);
+
+    // Hapus node dari tplist
+    address tempTPipa = tplist->head;
+    tplist->head = tplist->head->next;
+    if(tplist->head == NULL) {
+        tplist->tail = NULL;
+    }
+    free(tempTPipa);
 }
 
-void freeList(Singlelinkedlist *list){
-    if (list == NULL) return;
-    address current = list->head;
-    while(current != NULL){
-        address temp = current;
-        current = current->next;
+void freeList(){
+    // Kosongkan plist
+    address currentP = plist->head;
+    while(currentP != NULL){
+        address temp = currentP;
+        currentP = currentP->next;
         free(temp);
     }
-    list->head = list->tail = NULL;
-}
+    plist->head = plist->tail = NULL;
 
-// Fungsi untuk mengelola plist dan tplist global secara bersamaan
-void insertBelakangPasangan(address newNodePipa, address newNodeTPipa) {
-    if (newNodePipa != NULL && plist != NULL) {
-        insertBelakang(plist, newNodePipa);
-    } else if (newNodePipa == NULL && plist != NULL) {
-        // TraceLog(LOG_WARNING, "PIPA_LL: newNodePipa adalah NULL saat insertBelakangPasangan");
+    // Kosongkan tplist
+    address currentT = tplist->head;
+    while(currentT != NULL){
+        address temp = currentT;
+        currentT = currentT->next;
+        free(temp);
     }
-
-    if (newNodeTPipa != NULL && tplist != NULL) {
-        insertBelakang(tplist, newNodeTPipa);
-    } else if (newNodeTPipa == NULL && tplist != NULL) {
-        // TraceLog(LOG_WARNING, "PIPA_LL: newNodeTPipa adalah NULL saat insertBelakangPasangan");
-    }
-}
-
-void deleteFirstPasangan(){
-    if (plist != NULL) deleteFirst(plist);
-    if (tplist != NULL) deleteFirst(tplist);
-}
-
-void freeListPasangan(){
-    if (plist != NULL) freeList(plist);
-    if (tplist != NULL) freeList(tplist);
-    // TraceLog(LOG_DEBUG, "PIPA_LL: freeListPasangan dipanggil, plist dan tplist dibersihkan.");
+    tplist->head = tplist->tail = NULL;
 }

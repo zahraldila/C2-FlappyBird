@@ -2,7 +2,6 @@
 #define QLIO_H
 
 #include <raylib.h>
-
 #define MAX_LEADERBOARD_ENTRIES 5
 #define MAX_PLAYER_NAME_LENGTH 6 // Hanya 3 huruf untuk sederhana (AAA, BBB, dst.)
                                  // Bisa ditambah jika diinginkan, misal 8 atau 15 + null terminator
