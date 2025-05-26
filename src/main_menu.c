@@ -123,7 +123,7 @@ void DrawBackgroundSelectionScreen(BackgroundSelector *bgSelector) {
     const char *titleText = "PILIH BACKGROUND";
     DrawText(titleText, GetScreenWidth()/2 - MeasureText(titleText, 40)/2, 30, 40, YELLOW);
     DrawRectangle(0, GetScreenHeight() - 70, GetScreenWidth(), 70, Fade(BLACK, 0.5f));
-    DrawText("KIRI/KANAN: Ganti | ENTER: Pilih | BACKSPACE: Kembali", 50, GetScreenHeight() - 55, 20, RAYWHITE);
+    DrawText("KIRI/KANAN: Ganti | ENTER: Pilih & Kembali", 50, GetScreenHeight() - 55, 20, RAYWHITE);
     DrawRectangleRec(backButtonRec_BgSelect, Fade(DARKBLUE, 0.7f));
     DrawText("KEMBALI", backButtonRec_BgSelect.x + backButtonRec_BgSelect.width/2 - MeasureText("KEMBALI", 20)/2, backButtonRec_BgSelect.y + 10, 20, WHITE);
 }
@@ -136,7 +136,7 @@ void InitLeaderboardScreen() {
 
 GameState UpdateLeaderboardScreen(GameState currentGameState) {
     GameState nextState = currentGameState;
-    if (IsKeyPressed(KEY_BACKSPACE) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backButtonRec_Leaderboard))) {
+    if ((IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backButtonRec_Leaderboard))) {
         nextState = MENU;
     }
     return nextState;

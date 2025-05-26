@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
+#include <string.h> // Untuk strlen, strcpy
 
 #include "raylib.h"
 #include "bird_struct.h"
@@ -12,8 +13,13 @@
 #include "alexandrio.h"
 #include "zahra.h"
 #include "qlio.h"
-#include "sound.h"       // Untuk InitSounds, PlayMenuMusic, StopMenuMusic, UpdateMusic, IsMenuMusicCurrentlyPlaying
+#include "sound.h"
 #include "game_state.h"
+
+// Variabel untuk input nama leaderboard
+char playerNameInput[MAX_PLAYER_NAME_LENGTH + 1] = { 0 };
+int letterCount = 0;
+bool enteringNameMode = false;
 
 // plist dan tplist global dari PipaLinkedList.c
 
@@ -65,7 +71,7 @@ int main() {
     }
 
     InitSkor();
-    bool scoreSavedThisSession = false;
+    bool scoreAddedToLeaderboardThisSession = false;
 
     AwanNode *awanList = NULL;
     for (int j = 0; j < JUMLAH_AWAN; j++) {
@@ -86,7 +92,7 @@ int main() {
     }
     initList(plist);
     initList(tplist);
-    Buat_pipa_linkedlist();
+    // Buat_pipa_linkedlist() akan dipanggil saat transisi ke GAMEPLAY
 
     Font gameFont = GetFontDefault();
 
@@ -99,7 +105,11 @@ int main() {
         switch (currentState) {
             case MENU: {
                 gameOverState = GAME_READY;
-                scoreSavedThisSession = false;
+                scoreAddedToLeaderboardThisSession = false;
+                enteringNameMode = false;
+                letterCount = 0;
+                playerNameInput[0] = '\0';
+
                 if (IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
                     PlayMenuMusic();
                 }
@@ -116,6 +126,13 @@ int main() {
                     currentState = nextStateFromMenu;
                     if (currentState == GAMEPLAY) {
                         if (IsAudioDeviceReady()) StopMenuMusic();
+                        if (myBird) UnloadBird(myBird);
+                        myBird = InitBird();
+                        if (myBird == NULL || myBird->texture.id == 0) {
+                            TraceLog(LOG_ERROR, "MAIN: Gagal InitBird saat GAMEPLAY! Kembali ke MENU.");
+                            currentState = MENU;
+                            break;
+                        }
                         myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
                         myBird->speed = 0;
                         freeListPasangan();
@@ -149,86 +166,129 @@ int main() {
                 if (IsKeyPressed(KEY_P) && gameOverState != GAME_OVER) { tombolpause(&tmblpause); }
 
                 if (!tmblpause.isPause) {
-                    bgX -= KECEPATAN_BACKGROUND_SCROLL;
-                    if (backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
-                         if (bgX <= -backgroundSelector->current->texture.width) bgX = 0;
-                    } else if (bgX <= -SCREEN_WIDTH) {
-                         bgX = 0;
-                    }
-                    updateAwan(awanList);
-
-                    if (gameOverState == GAME_READY) {
-                        myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
-                        myBird->speed = 0;
-                        if (IsKeyPressed(KEY_SPACE)) {
-                            gameOverState = GAME_ACTIVE;
-                            myBird->speed = FLAP_STRENGTH;
-                            if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_FLAP);
+                    if (!enteringNameMode) { // Hanya update game jika tidak sedang input nama
+                        bgX -= KECEPATAN_BACKGROUND_SCROLL;
+                        if (backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
+                             if (bgX <= -backgroundSelector->current->texture.width) bgX = 0;
+                        } else if (bgX <= -SCREEN_WIDTH) {
+                             bgX = 0;
                         }
-                    } else if (gameOverState == GAME_ACTIVE) {
-                        UpdateBird(myBird);
-                         if (IsKeyPressed(KEY_SPACE)) {
-                            myBird->speed = FLAP_STRENGTH;
-                            if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_FLAP);
-                        }
-                        Pergerakan_pipa();
+                        updateAwan(awanList);
 
-                        GameOverState prevState = gameOverState;
-                        gameOverState = UpdateGameCollision(*myBird, plist, tplist);
-
-                        if (prevState == GAME_ACTIVE && gameOverState == GAME_OVER) {
-                            if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_GAME_OVER);
-                            printf(">> GAME OVER PADA SCORE: %d\n", score);
-                            AddScoreToLeaderboard(score);
-                            scoreSavedThisSession = true;
-                        }
-                        if (gameOverState == GAME_ACTIVE) {
-                            address p_iter = plist->head;
-                            while (p_iter != NULL) {
-                                float birdRightX = myBird->position.x + myBird->collisionWidth;
-                                float pipeBackX = p_iter->korx + LEBAR_PIPA;
-
-                                if (!p_iter->status && myBird->position.x > pipeBackX) {
-                                    TambahSkor();
-                                    if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_SCORE);
-                                    p_iter->status = 1;
-                                }
-                                p_iter = p_iter->next;
-                            }
-                        }
-                    } else { // GAME_OVER
-                        if (!scoreSavedThisSession) {
-                            SimpanHighscore(); // Fungsi lama untuk highscore tunggal
-                        }
-                        Pipa_berhenti(false);
-
-                        if (IsKeyPressed(KEY_ENTER)) {
+                        if (gameOverState == GAME_READY) {
                             myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
                             myBird->speed = 0;
-                            freeListPasangan();
-                            Buat_pipa_linkedlist();
-                            ResetSkor();
-                            Pipa_berhenti(true);
-                            scoreSavedThisSession = false; // Reset untuk sesi game baru
-                            gameOverState = GAME_READY;
-                            jedapause(&tmblpause);
-                        } else if (IsKeyPressed(KEY_BACKSPACE)) {
-                            currentState = MENU;
-                            // menuMusicStarted akan dihandle oleh logika di case MENU
-                            Pipa_berhenti(true);
-                            gameOverState = GAME_READY;
-                        }
-                    }
-                }
-            } break;
-            default: break;
-        }
+                            if (IsKeyPressed(KEY_SPACE)) {
+                                gameOverState = GAME_ACTIVE;
+                                myBird->speed = FLAP_STRENGTH;
+                                if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_FLAP);
+                            }
+                        } else if (gameOverState == GAME_ACTIVE) {
+                            UpdateBird(myBird);
+                             if (IsKeyPressed(KEY_SPACE)) {
+                                myBird->speed = FLAP_STRENGTH;
+                                if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_FLAP);
+                            }
+                            Pergerakan_pipa();
 
-        // --- DRAWING ---
+                            GameOverState prevState = gameOverState;
+                            gameOverState = UpdateGameCollision(*myBird, plist, tplist);
+
+                            if (prevState == GAME_ACTIVE && gameOverState == GAME_OVER) {
+                                if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_GAME_OVER);
+                                printf(">> GAME OVER PADA SCORE: %d\n", score);
+                                if (IsScoreHighEnough(score) && !scoreAddedToLeaderboardThisSession) {
+                                    enteringNameMode = true;
+                                    letterCount = 0;
+                                    playerNameInput[0] = '\0';
+                                } else {
+                                    // SimpanHighscore(); // Opsional jika masih mau highscore tunggal
+                                }
+                            }
+                            if (gameOverState == GAME_ACTIVE) { // Update skor jika masih aktif
+                                address p_iter = plist->head;
+                                while (p_iter != NULL) {
+                                    if (!p_iter->status && (myBird->position.x > p_iter->korx + LEBAR_PIPA)) {
+                                        TambahSkor();
+                                        if(IsAudioDeviceReady()) PlaySoundEffect(SOUND_SCORE);
+                                        p_iter->status = 1;
+                                    }
+                                    p_iter = p_iter->next;
+                                }
+                            }
+                        } else { // GAME_OVER (dan tidak sedang enteringNameMode awalnya)
+                            Pipa_berhenti(false);
+                            // Logika untuk restart atau kembali ke menu setelah GAME_OVER (bukan saat input nama)
+                            if (IsKeyPressed(KEY_ENTER)) {
+                                if (myBird) UnloadBird(myBird);
+                                myBird = InitBird();
+                                if (myBird == NULL || myBird->texture.id == 0) { currentState = MENU; break; }
+                                myBird->position.y = SCREEN_HEIGHT / 2.0f - myBird->collisionHeight / 2.0f;
+                                myBird->speed = 0;
+                                freeListPasangan();
+                                Buat_pipa_linkedlist();
+                                ResetSkor();
+                                Pipa_berhenti(true);
+                                scoreAddedToLeaderboardThisSession = false;
+                                gameOverState = GAME_READY;
+                                jedapause(&tmblpause);
+                            } else if (IsKeyPressed(KEY_BACKSPACE)) {
+                                currentState = MENU;
+                                Pipa_berhenti(true);
+                                gameOverState = GAME_READY;
+                            }
+                        }
+                    } else { // Ini adalah blok else untuk if (!enteringNameMode), jadi ini adalah saat enteringNameMode == true
+                        // --- LOGIKA INPUT NAMA ---
+                        SetMouseCursor(MOUSE_CURSOR_IBEAM);
+
+                        int key = GetCharPressed();
+                        while (key > 0) {
+                            if (((key >= 32) && (key <= 126)) && (letterCount < MAX_PLAYER_NAME_LENGTH)) {
+                                char charToAdd = (char)key;
+                                if (charToAdd >= 'a' && charToAdd <= 'z') {
+                                    charToAdd = (char)(charToAdd - 'a' + 'A');
+                                }
+                                if ((charToAdd >= 'A' && charToAdd <= 'Z') || (charToAdd >= '0' && charToAdd <= '9')) {
+                                    playerNameInput[letterCount] = charToAdd;
+                                    playerNameInput[letterCount + 1] = '\0';
+                                    letterCount++;
+                                }
+                            }
+                            key = GetCharPressed();
+                        }
+
+                        if (IsKeyPressed(KEY_BACKSPACE)) {
+                            if (letterCount > 0) {
+                                letterCount--;
+                                playerNameInput[letterCount] = '\0';
+                            }
+                        }
+
+                        if (IsKeyPressed(KEY_ENTER)) {
+                            if (letterCount == 0) {
+                                strcpy(playerNameInput, "AAA");
+                            }
+                            AddScoreToLeaderboard(playerNameInput, score);
+                            scoreAddedToLeaderboardThisSession = true;
+                            enteringNameMode = false;
+                            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+                            // Setelah input nama, game tetap dalam state GAME_OVER,
+                            // pemain kemudian bisa memilih restart atau kembali ke menu
+                            // yang akan ditangani oleh blok 'else { // GAME_OVER ... }' di atas pada iterasi berikutnya.
+                        }
+                    } // Akhir dari if (enteringNameMode)
+                } // Akhir dari if (!tmblpause.isPause)
+            } break; // Akhir dari case GAMEPLAY
+            default: break;
+        } // Akhir dari switch (currentState) untuk UPDATE LOGIC
+
+        // --- BAGIAN DRAWING ---
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        if (currentState != BACKGROUND_SELECTION && currentState != LEADERBOARD) {
+        // Gambar background
+        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode) ) {
             LoopDrawSelectedBackground(backgroundSelector, &bgX);
         } 
         else if (currentState == LEADERBOARD) 
@@ -248,8 +308,12 @@ int main() {
                 // Anda bisa membiarkan ClearBackground(SKYBLUE) saja atau gambar warna solid lain
             }
         }
-        gambarAwan(awanList);
+        // Awan
+        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode) || currentState == BACKGROUND_SELECTION || currentState == LEADERBOARD) {
+             gambarAwan(awanList);
+        }
 
+        // Gambar elemen spesifik per state
         switch (currentState) {
             case MENU: {
                 setupMenu();
@@ -261,11 +325,34 @@ int main() {
                 DrawLeaderboardScreen(gameFont);
             } break;
             case GAMEPLAY: {
-                Gambar_pipa(score);
-                DrawBird(myBird);
-                TampilkanSkor(gameFont);
+                if (myBird == NULL || myBird->texture.id == 0) {
+                    DrawText("ERROR: BURUNG TIDAK DAPAT DIMUAT!", GetScreenWidth()/2 - MeasureText("ERROR: BURUNG TIDAK DAPAT DIMUAT!", 20)/2, GetScreenHeight()/2 -10, 20, RED);
+                } else {
+                    // Hanya gambar pipa dan burung jika tidak sedang input nama
+                    if (!enteringNameMode) {
+                        Gambar_pipa(score);
+                        DrawBird(myBird);
+                    }
+                }
+                TampilkanSkor(gameFont); // Skor selalu tampil
 
-                if (gameOverState == GAME_READY && !tmblpause.isPause) {
+                if (enteringNameMode) {
+                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8f));
+                    const char* congratsText = "NEW HIGHSCORE!";
+                    DrawText(congratsText, SCREEN_WIDTH / 2 - MeasureText(congratsText, 40) / 2, SCREEN_HEIGHT / 2 - 100, 40, YELLOW);
+                    const char* enterNameText = TextFormat("ENTER NAME (%d Chars Max):", MAX_PLAYER_NAME_LENGTH);
+                    DrawText(enterNameText, SCREEN_WIDTH / 2 - MeasureText(enterNameText, 20) / 2, SCREEN_HEIGHT / 2 - 40, 20, RAYWHITE);
+                    Rectangle textBox = { SCREEN_WIDTH / 2.0f - 75, SCREEN_HEIGHT / 2.0f - 10, 150, 50 };
+                    DrawRectangleRec(textBox, LIGHTGRAY);
+                    DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, DARKGRAY);
+                    DrawText(playerNameInput, (int)textBox.x + 10, (int)textBox.y + 15, 30, MAROON);
+                    if (letterCount < MAX_PLAYER_NAME_LENGTH) {
+                        if (((int)(GetTime()*2.5f))%2 == 0) {
+                             DrawText("_", (int)textBox.x + 10 + MeasureText(playerNameInput, 30), (int)textBox.y + 12, 30, MAROON);
+                        }
+                    }
+                    DrawText("Press ENTER to Confirm", SCREEN_WIDTH / 2 - MeasureText("Press ENTER to Confirm", 20) / 2, SCREEN_HEIGHT / 2 + 60, 20, LIGHTGRAY);
+                } else if (gameOverState == GAME_READY && !tmblpause.isPause) {
                     const char* getReadyMsg = "GET READY!";
                     const char* pressSpaceMsg = "Press SPACE to Start";
                     DrawText(getReadyMsg, SCREEN_WIDTH / 2 - MeasureText(getReadyMsg, 40) / 2, SCREEN_HEIGHT / 2 - 60, 40, LIME);
@@ -273,20 +360,21 @@ int main() {
                 } else if (gameOverState == GAME_OVER && !tmblpause.isPause) {
                     DrawGameOver(SCREEN_WIDTH, SCREEN_HEIGHT, score);
                 }
-                if (tmblpause.isPause) { DrawPauseScreen(&tmblpause); }
+
+                if (tmblpause.isPause && !enteringNameMode) { DrawPauseScreen(&tmblpause); }
             } break;
             default: break;
         }
         EndDrawing();
-    }
+    } // Akhir dari while (!WindowShouldClose())
 
+    // --- CLEANUP ---
     SimpanHighscore();
     SaveLeaderboard();
-
-    UnloadBird(myBird);
+    if (myBird) UnloadBird(myBird);
     UnloadBackgroundSelector(backgroundSelector);
     if(IsAudioDeviceReady()) {
-        StopMenuMusic(); // <--- GANTI DARI StopMusicStream(menuMusic)
+        StopMenuMusic();
         UnloadSounds();
     }
     if (IsAudioDeviceReady()) CloseAudioDevice();
