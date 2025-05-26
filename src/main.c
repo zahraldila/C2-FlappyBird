@@ -20,10 +20,13 @@
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird C2");
     Image icon = LoadImage("assets/icon.png");
-    if (icon.data != NULL) {
+    if (icon.data != NULL) 
+    {
         SetWindowIcon(icon);
         UnloadImage(icon);
-    } else {
+    } 
+    else 
+    {
         TraceLog(LOG_WARNING, "MAIN: Gagal memuat ikon 'assets/icon.png'");
     }
     SetTargetFPS(60);
@@ -42,13 +45,15 @@ int main() {
     jedapause(&tmblpause);
 
     Bird *myBird = InitBird();
-    if (myBird == NULL) {
+    if (myBird == NULL) 
+    {
         TraceLog(LOG_FATAL, "MAIN: Gagal menginisialisasi burung!");
         UnloadBackgroundSelector(backgroundSelector);
         CloseWindow();
         return 1;
      }
-    if (myBird->texture.id == 0) {
+    if (myBird->texture.id == 0) 
+    {
         TraceLog(LOG_WARNING, "MAIN: Tekstur burung tidak valid setelah InitBird(). Burung mungkin tidak terlihat.");
     }
 
@@ -125,19 +130,22 @@ int main() {
                     }
                 }
             } break;
-            case BACKGROUND_SELECTION: {
+            case BACKGROUND_SELECTION: 
+            {
                 currentState = UpdateBackgroundSelectionScreen(backgroundSelector, currentState);
                  if (currentState == MENU && IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
                     PlayMenuMusic();
                 }
             } break;
-            case LEADERBOARD: {
+            case LEADERBOARD: 
+            {
                 currentState = UpdateLeaderboardScreen(currentState);
                  if (currentState == MENU && IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
                     PlayMenuMusic();
                 }
             } break;
-            case GAMEPLAY: {
+            case GAMEPLAY: 
+            {
                 if (IsKeyPressed(KEY_P) && gameOverState != GAME_OVER) { tombolpause(&tmblpause); }
 
                 if (!tmblpause.isPause) {
@@ -222,14 +230,20 @@ int main() {
 
         if (currentState != BACKGROUND_SELECTION && currentState != LEADERBOARD) {
             LoopDrawSelectedBackground(backgroundSelector, &bgX);
-        } else if (currentState == LEADERBOARD) {
+        } 
+        else if (currentState == LEADERBOARD) 
+        {
             // Untuk leaderboard, kita gambar background yang sedang aktif (current) secara statis
             if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
                  DrawTexture(backgroundSelector->current->texture, 0, 0, WHITE); // Menggunakan current background
-            } else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) {
+            }
+             else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) 
+            {
                 // Fallback ke background pertama jika current tidak valid (seharusnya tidak terjadi jika selector diinisialisasi dengan benar)
                  DrawTexture(backgroundSelector->head->texture, 0, 0, WHITE);
-            } else {
+            } 
+            else 
+            {
                 // Fallback jika tidak ada background sama sekali
                 // Anda bisa membiarkan ClearBackground(SKYBLUE) saja atau gambar warna solid lain
             }
