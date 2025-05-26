@@ -12,6 +12,9 @@
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
+    Image icon = LoadImage("icon.png");
+    SetWindowIcon(icon);
+    UnloadImage(icon);
     SetTargetFPS(60);
     SetRandomSeed(time(NULL));
 
@@ -28,7 +31,6 @@ int main() {
     InitBirds(birds, MAX_BIRDS);
     Bird bird = CreateBird(SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2, "Flappy.png", 0.8f); // posisi burung agak kanan
 
-    Buat_awan(Awan);
     Buat_pipa(Pipa, TutupPipa);
 
     // === Sistem Skor ===
@@ -44,9 +46,19 @@ int main() {
     
     // Flag untuk mengelola menu music
     bool menuMusicStarted = false;
-
+    
+    //inisialisasi awan
+    AwanNode *awanList = NULL;
+    for (int j = 0; j < JUMLAH_AWAN; j++)
+    {
+        float x = SCREEN_WIDTH + j * 200;
+        float y = rand() % 150;
+        insertAwan(&awanList, x, y);
+    }
+    
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) {
+        if (gameOverState != GAME_OVER && IsKeyPressed(KEY_P)) 
+        {
             tombolpause(&tmblpause);
         }
 
@@ -57,14 +69,17 @@ int main() {
             // Background bergerak
             bgX -= 0.5f;
             if (bgX <= -SCREEN_WIDTH) bgX = 0;
+
+            updateAwan(awanList);
         }
 
         BeginDrawing();
         ClearBackground(SKYBLUE);
         DrawBackground(cityBg, bgX);
-        Gambar_awan(Awan);
+        gambarAwan(awanList);
 
-        if (currentState == MENU) {
+        if (currentState == MENU) 
+        {
             gameOverState = GAME_READY;
             
             // Hanya memulai musik menu sekali ketika memasuki state menu
@@ -73,7 +88,7 @@ int main() {
                 menuMusicStarted = true;
             }
             
-            currentState = DrawMenu(SCREEN_WIDTH, SCREEN_HEIGHT);
+            currentState = DrawMenu();
 
             if (currentState == GAMEPLAY) {
                 StopMenuMusic(); // Stop musik saat masuk gameplay
@@ -86,7 +101,33 @@ int main() {
                 scoreSaved = false;
                 for (int i = 0; i < 3; i++) passedPipe[i] = false;
             }
-        } else if (currentState == GAMEPLAY) {
+        }
+        else if (currentState == BACKGROUND)
+        {
+            // Panggil fungsi tampilan dan logika pemilihan background
+            // Misalnya: DrawBackgroundSelection();
+            // Setelah selesai memilih, kembali ke menu
+            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
+            currentState = MENU;
+        }
+
+        else if (currentState == SKIN)
+        {
+            // Panggil fungsi tampilan dan logika pemilihan skin
+            // Setelah selesai memilih, kembali ke menu
+            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
+            currentState = MENU;
+        }
+
+        else if (currentState == LEADERBOARD)
+        {
+            // Panggil fungsi tampilan dan logika untuk score
+            // Setelah selesai memilih, kembali ke menu
+            DrawText("SKIN SELECTION - Tekan ENTER untuk kembali", 100, 100, 20, DARKGRAY);
+            currentState = MENU;
+        }
+        else if (currentState == GAMEPLAY) 
+        {
             if (!tmblpause.isPause) {
                 if (gameOverState == GAME_READY) {
                     birds[0].position.y = SCREEN_HEIGHT / 2;
@@ -102,7 +143,6 @@ int main() {
                     UpdateBirds(birds, MAX_BIRDS);
                     
                     // Update posisi pipa
-                    Pergerakan_awan(Awan);
                     Pergerakan_pipa(Pipa, TutupPipa);
                     
                     for (int i = 0; i < 3; i++) {
@@ -146,11 +186,13 @@ int main() {
                     if (!scoreSaved) {
                         // Simpan highscore hanya sekali saat game over
                         SimpanHighscore();
+                        Pipa_berhenti(false);
                         scoreSaved = true;
                     }
-
+                    
                     if (IsKeyPressed(KEY_ENTER)) {
                         gameOverState = GAME_READY;
+                        Pipa_berhenti(true);
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         ResetSkor(); // Gunakan fungsi reset skor
                         scoreSaved = false;
@@ -159,6 +201,7 @@ int main() {
                         currentState = MENU;
                         ResetGame(&birds[0], Pipa, TutupPipa);
                         ResetSkor(); // Gunakan fungsi reset skor
+                        Pipa_berhenti(true);
                         scoreSaved = false;
                         for (int i = 0; i < 3; i++) passedPipe[i] = false;
                         
@@ -176,10 +219,11 @@ int main() {
             DrawText(TextFormat("Highscore: %d", highscore), SCREEN_WIDTH / 2 - 80, 40, 25, DARKGRAY);
 
             if (gameOverState == GAME_READY) {
-                DrawText("GET READY!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 30, 40, DARKGRAY);
-                DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, DARKGRAY);
+                DrawText("GET READY!", SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 - 30, 40, LIME);
+                DrawText("Press SPACE to Start", SCREEN_WIDTH / 2 - 140, SCREEN_HEIGHT / 2 + 20, 25, LIME);
             } else if (gameOverState == GAME_ACTIVE) {
                 DrawText("Press SPACE to Flap!", 10, 10, 20, DARKGRAY);
+                DrawText("Press P to Pause", 10, 30, 20, DARKGRAY);
             }
 
             if (gameOverState == GAME_OVER) {
@@ -199,10 +243,11 @@ int main() {
 
     // Unload dan cleanup
     UnloadBirds(birds, MAX_BIRDS);
-    UnloadBird(&bird);
     UnloadTexture(cityBg);
     UnloadSounds();
     CloseAudioDevice();
+
+    freeAwan(&awanList);
     CloseWindow();
 
     return 0;

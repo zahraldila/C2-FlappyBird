@@ -6,7 +6,7 @@
 #include <time.h>
 
 void InitGame(Bird *birds, Bird *bird, int Pipa[3][3], int TutupPipa[3][3], Texture2D *cityBg) {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird - Combined Version");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird");
     SetTargetFPS(60);
     SetRandomSeed(time(NULL));
     
