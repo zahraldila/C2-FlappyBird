@@ -8,32 +8,32 @@
 
 
 // Di luar fungsi (global scope)
-Singlelinkedlist *plist = NULL;
-Singlelinkedlist *tplist = NULL;
+Singlelinkedlist *plist = KOSONG;
+Singlelinkedlist *tplist = KOSONG;
 int Gerak[3];
 Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};
 bool Stop = true;
 
 void Buat_pipa() {
-    for(int i = 0; i < 3; i++) {
-        address newNodePipa = buatNodePipa(i);
-        address newNodeTPipa = buatNodeTPipa(i, newNodePipa->tinggi);
+    for(int PIPA_KE = 0; PIPA_KE < 3; PIPA_KE++) {
+        address newNodePipa = buatNodePipa(PIPA_KE);
+        address newNodeTPipa = buatNodeTPipa(PIPA_KE, newNodePipa->tinggi);
         // Simpan gerakan awal 
-        Gerak[i] = (rand() % 2) ? 1 : 0;
+        Gerak[PIPA_KE] = (rand() % 2) ? 1 : 0;
         insertBelakang(newNodePipa, newNodeTPipa);
     }
 }
 
 void Pergerakan_pipa(){
-    address p = plist->head;
-    address t = tplist->head;
+    address pipaTemp = plist->head;
+    address tpipaTemp = tplist->head;
 
-    while (p != NULL && t != NULL) {
-        p->korx -= KECEPATAN_PIPA;
-        t->korx -= KECEPATAN_PIPA;
+    while (pipaTemp != KOSONG && tpipaTemp != KOSONG) {
+        pipaTemp->korx -= KECEPATAN_PIPA;
+        tpipaTemp->korx -= KECEPATAN_PIPA;
 
-        if (p->korx + LEBAR_PIPA < 0) {
+        if (pipaTemp->korx + LEBAR_PIPA < 0) {
             deleteFirst();
             address newNodePipa = buatNodePipa(0); 
             address newNodeTPipa = buatNodeTPipa(0, newNodePipa->tinggi);
@@ -41,40 +41,40 @@ void Pergerakan_pipa(){
             return; 
         }
 
-        p = p->next;
-        t = t->next;
+        pipaTemp = pipaTemp->next;
+        tpipaTemp = tpipaTemp->next;
     }
 }
 
 
-void Gambar_pipa(int s) {
-    address p = plist->head;
-    address t = tplist->head;
+void Gambar_pipa(int Skor){
+    address pipaTemp = plist->head;
+    address tpipaTemp = tplist->head;
     int i = 0;
 
-    while(p != NULL && t != NULL) {
-        if(s > 14 && Stop) {
+    while(pipaTemp != KOSONG && tpipaTemp != KOSONG) {
+        if(Skor > 14 && Stop) {
             // Update posisi naik turun per node
             if (Gerak[i] == 0) {
-                p->tinggi += 1; 
-                if (p->tinggi >= TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 50) {
+                pipaTemp->tinggi += 1; 
+                if (pipaTemp->tinggi >= TINGGI_LAYAR - JARAK_PIPA_ATAS_BAWAH - 50) {
                     Gerak[i] = 1;
                 }
             } else {
-                p->tinggi -= 1;
-                if (p->tinggi <= 50) {
+                pipaTemp->tinggi -= 1;
+                if (pipaTemp->tinggi <= 50) {
                     Gerak[i] = 0;
                 }
             }
         }
 
         // Gambar setiap pipa
-        DrawRectangle(p->korx, 0, LEBAR_PIPA, p->tinggi, GREEN);
-        DrawRectangle(t->korx, p->tinggi - 30, LEBAR_PIPA + 20, 30, GREEN);
-        DrawRectangle(p->korx, p->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - p->tinggi - JARAK_PIPA_ATAS_BAWAH, GREEN);
-        DrawRectangle(t->korx, p->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA + 20, 30, GREEN);
-        p = p->next;
-        t = t->next;
+        DrawRectangle(pipaTemp->korx, 0, LEBAR_PIPA, pipaTemp->tinggi, GREEN);
+        DrawRectangle(tpipaTemp->korx, pipaTemp->tinggi - 30, LEBAR_PIPA + 20, 30, GREEN);
+        DrawRectangle(pipaTemp->korx, pipaTemp->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - pipaTemp->tinggi - JARAK_PIPA_ATAS_BAWAH, GREEN);
+        DrawRectangle(tpipaTemp->korx, pipaTemp->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA + 20, 30, GREEN);
+        pipaTemp = pipaTemp->next;
+        tpipaTemp = tpipaTemp->next;
         i++;
     }
     DrawRectangle(0, 420, LEBAR_LAYAR, 100, TANAH);
@@ -83,7 +83,7 @@ void Gambar_pipa(int s) {
 
 
 void Hapus_semua_pipa(){
-    if (plist != NULL && tplist != NULL){ 
+    if (plist != KOSONG && tplist != KOSONG){ 
     freeList();
     }
 }

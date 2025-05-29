@@ -12,6 +12,7 @@
 #define KECEPATAN_PIPA 2
 #define SCREEN_HEIGHT 450
 #define SCREEN_WIDTH 800
+#define KOSONG NULL
 
 extern Color TANAH;
 extern Color RUMPUT;
@@ -23,7 +24,7 @@ extern Singlelinkedlist *tplist;
 
 void Buat_pipa();
 void Pergerakan_pipa();
-void Gambar_pipa(int s);
+void Gambar_pipa(int skor);
 void Pipa_naik_turun();
 void Munculkan_Pipa();
 void Pipa_berhenti(bool cek);
