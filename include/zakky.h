@@ -49,6 +49,7 @@ void InitLeaderboardScreen(void); // Mungkin tidak perlu jika LoadLeaderboard su
 GameState UpdateLeaderboardScreen(GameState currentGameState);
 void DrawLeaderboardScreen(Font font); // Butuh font untuk menggambar teks
 void DrawCreditScreen(Font font);
+GameState UpdateCreditScreen(GameState currentGameState);
 
 
 typedef struct AwanNode {

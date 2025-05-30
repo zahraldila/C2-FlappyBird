@@ -293,6 +293,14 @@ int main() {
             case STATE_HELP: { // <-- KASUS BARU INI (UPDATE LOGIC)
                 HandleHelpState(&currentState); // Panggil fungsi update untuk state bantuan
             } break;
+            case CREDIT:
+            {
+                currentState = UpdateCreditScreen(currentState); // Panggil fungsi update dari main_menu.c
+                if (currentState == MENU && IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) 
+                {
+                    PlayMenuMusic();
+                } 
+            }
             default: break;
         }
 
@@ -300,10 +308,13 @@ int main() {
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode)) {
+        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode)) 
+        {
             LoopDrawSelectedBackground(backgroundSelector, &bgX);
-        } else if (currentState == LEADERBOARD || (currentState == GAMEPLAY && enteringNameMode) ||
-                   currentState == STATE_HELP) {
+        } 
+        else if (currentState == LEADERBOARD || (currentState == GAMEPLAY && enteringNameMode) ||
+                   currentState == STATE_HELP) 
+        {
             if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
                 DrawTexture(backgroundSelector->current->texture, 0, 0, WHITE);
             } else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) {

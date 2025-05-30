@@ -67,3 +67,5 @@ void DrawHelpScreen(void) {
     const char* backMsg = "Tekan BACKSPACE untuk Kembali ke Menu";
     DrawText(backMsg, GetScreenWidth()/2 - MeasureText(backMsg, 20)/2, GetScreenHeight() - 70, 20, LIGHTGRAY);
 }
+
+
