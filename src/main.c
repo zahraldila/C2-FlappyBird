@@ -8,11 +8,11 @@
 #include "bird_struct.h"
 #include "pipa_ll.h"
 #include "dava.h"
-#include "zakky.h"
-#include "alexandrio.h"
-#include "zahra.h"
-#include "qlio.h"
-#include "sound.h"
+#include "zakky.h" // Untuk GameState, MENU, GAMEPLAY, PauseState, jedapause, tombolpause, setupMenu, pilihMenu, UpdateBackgroundSelectionScreen, DrawBackgroundSelectionScreen, InitLeaderboardScreen, UpdateLeaderboardScreen, DrawLeaderboardScreen, awanList, JUMLAH_AWAN, SCREEN_WIDTH, KECEPATAN_BACKGROUND_SCROLL, updateAwan, gambarAwan, freeAwan, bgX
+#include "alexandrio.h" // Untuk Hapus_semua_pipa, Buat_pipa, Pipa_berhenti, Pergerakan_pipa, Gambar_pipa, LEBAR_PIPA
+#include "zahra.h" // Untuk GameOverState, UpdateGameCollision, DrawGameOver, HandleHelpState, DrawHelpScreen
+#include "qlio.h" // Untuk InitSkor, TambahSkor, ResetSkor, TampilkanSkor, SimpanHighscore, IsMenuMusicCurrentlyPlaying, PlayMenuMusic, StopMenuMusic, InitSounds, PlaySoundEffect, UnloadSounds, UpdateMusic, score
+#include "sound.h" // Sudah ter-include dari qlio.h
 #include "leaderboard.h" // Untuk fungsi leaderboard
 
 // Variabel untuk input nama leaderboard
@@ -23,12 +23,12 @@ bool enteringNameMode = false;
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Flappy Bird C2");
     Image icon = LoadImage("assets/icon.png");
-    if (icon.data != NULL) 
+    if (icon.data != NULL)
     {
         SetWindowIcon(icon);
         UnloadImage(icon);
-    } 
-    else 
+    }
+    else
     {
         TraceLog(LOG_WARNING, "MAIN: Gagal memuat ikon 'assets/icon.png'");
     }
@@ -53,7 +53,7 @@ int main() {
     jedapause(&tmblpause);
 
     Bird *myBird = InitBird();
-    if (myBird == NULL) 
+    if (myBird == NULL)
     {
         TraceLog(LOG_FATAL, "MAIN: Gagal menginisialisasi burung!");
         UnloadBackgroundSelector(backgroundSelector);
@@ -61,7 +61,7 @@ int main() {
         CloseWindow();
         return 1;
     }
-    if (myBird->texture.id == 0) 
+    if (myBird->texture.id == 0)
     {
         TraceLog(LOG_WARNING, "MAIN: Tekstur burung tidak valid setelah InitBird(). Burung mungkin tidak terlihat.");
     }
@@ -139,6 +139,8 @@ int main() {
                         InitBackgroundSelectionScreen();
                     } else if (currentState == LEADERBOARD) {
                         InitLeaderboardScreen();
+                    } else if (currentState == STATE_HELP) { // <-- BARIS INI DITAMBAHKAN
+                        // Tidak ada inisialisasi khusus untuk layar bantuan
                     }
                 }
             } break;
@@ -275,7 +277,6 @@ int main() {
                                 scoreAddedToLeaderboardThisSession = false;
                                 gameOverState = GAME_READY;
                                 jedapause(&tmblpause);
-                                // Minta nama lagi untuk permainan baru
                                 needNameInput = true;
                                 enteringNameMode = true;
                                 letterCount = 0;
@@ -289,6 +290,9 @@ int main() {
                     }
                 }
             } break;
+            case STATE_HELP: { // <-- KASUS BARU INI (UPDATE LOGIC)
+                HandleHelpState(&currentState); // Panggil fungsi update untuk state bantuan
+            } break;
             default: break;
         }
 
@@ -296,18 +300,21 @@ int main() {
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        // Gambar background
         if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode)) {
             LoopDrawSelectedBackground(backgroundSelector, &bgX);
-        } else if (currentState == LEADERBOARD || (currentState == GAMEPLAY && enteringNameMode)) {
+        } else if (currentState == LEADERBOARD || (currentState == GAMEPLAY && enteringNameMode) ||
+                   currentState == STATE_HELP) {
             if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
                 DrawTexture(backgroundSelector->current->texture, 0, 0, WHITE);
             } else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) {
                 DrawTexture(backgroundSelector->head->texture, 0, 0, WHITE);
             }
         }
+
         // Awan
-        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode) || currentState == BACKGROUND_SELECTION || currentState == LEADERBOARD) {
+        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode) ||
+            currentState == BACKGROUND_SELECTION || currentState == LEADERBOARD ||
+            currentState == STATE_HELP) { 
             gambarAwan(awanList);
         }
 
@@ -357,6 +364,9 @@ int main() {
 
                     if (tmblpause.isPause && !enteringNameMode) { DrawPauseScreen(&tmblpause); }
                 }
+            } break;
+            case STATE_HELP: { 
+                DrawHelpScreen();
             } break;
             default: break;
         }

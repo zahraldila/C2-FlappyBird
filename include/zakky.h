@@ -23,8 +23,9 @@ typedef enum {
     GAMEPLAY,
     BACKGROUND_SELECTION,
     SKIN,
-    LEADERBOARD, // State baru
-    CREDIT
+    LEADERBOARD,
+    CREDIT,
+    STATE_HELP 
 } GameState;
 
 typedef struct {
