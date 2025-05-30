@@ -13,7 +13,6 @@
 #include "zahra.h"
 #include "qlio.h"
 #include "sound.h"
-#include "game_state.h"
 #include "leaderboard.h" // Untuk fungsi leaderboard
 
 // Variabel untuk input nama leaderboard

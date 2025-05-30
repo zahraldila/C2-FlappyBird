@@ -17,26 +17,26 @@ void setupMenu()
     DrawText("Flappy Bird", LEBAR_LAYAR / 2 - 170, 100, 60, YELLOW);
 
     // Gambar tombol "START"
-    Rectangle startButton = { LEBAR_LAYAR / 3 - 100, 250, 200, 50 };
+    Rectangle startButton = { LEBAR_LAYAR / 3 - 120, 250, 220, 50 };
     DrawRectangleRec(startButton, BLUE);
-    DrawText("START", LEBAR_LAYAR / 3 - 40, 265, 20, WHITE);
+    DrawText("Start", LEBAR_LAYAR / 3 - 40, 265, 20, WHITE);
 
-    Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
+    Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 220, 50 };
     DrawRectangleRec(scoreButton, BLUE);
-    DrawText("Leaderboard", LEBAR_LAYAR / 2 + 40, 265, 20, WHITE);
+    DrawText("Leaderboard", LEBAR_LAYAR / 2 + 50, 265, 20, WHITE);
 
     // Gambar tombol "choose background"
-    Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
+    Rectangle bckButton = { LEBAR_LAYAR / 3 - 120, 320, 220, 50 };
     DrawRectangleRec(bckButton, BLUE);
-    DrawText("choose background", LEBAR_LAYAR / 5 + 5 , 335, 20, WHITE);
+    DrawText("Choose background", LEBAR_LAYAR / 3 - 110, 335, 20, WHITE);
 
-    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
+    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 220, 50 };
     DrawRectangleRec(skinButton, BLUE);
-    DrawText("choose skin", LEBAR_LAYAR / 2 + 35, 335, 20, WHITE);
+    DrawText("Choose skin", LEBAR_LAYAR / 2 + 50, 335, 20, WHITE);
 
     Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 190, 50 };
     DrawRectangleRec(exitButton, RED);
-    DrawText("EXIT", LEBAR_LAYAR / 2 - 50, 390, 20, WHITE);
+    DrawText("Exit", LEBAR_LAYAR / 2 - 25, 395, 20, WHITE);
 
 }
 
