@@ -30,9 +30,9 @@ void setupMenu()
     DrawRectangleRec(bckButton, BLUE);
     DrawText("Choose background", LEBAR_LAYAR / 3 - 110, 335, 20, WHITE);
 
-    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 220, 50 };
-    DrawRectangleRec(skinButton, BLUE);
-    DrawText("Choose skin", LEBAR_LAYAR / 2 + 50, 335, 20, WHITE);
+    Rectangle helpButton = { LEBAR_LAYAR / 2, 320, 220, 50 };
+    DrawRectangleRec(helpButton, GREEN);
+    DrawText("Help", LEBAR_LAYAR / 2 + 90, 335, 20, WHITE);
 
     Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 190, 50 };
     DrawRectangleRec(exitButton, RED);
@@ -49,7 +49,7 @@ GameState pilihMenu()
     Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 200, 50 };
     Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
     Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
-    Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
+    Rectangle helpButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
 
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -75,9 +75,9 @@ GameState pilihMenu()
             exit(0);
         }
 
-        if (CheckCollisionPointRec(mousePoint, skinButton))
+        if (CheckCollisionPointRec(mousePoint, helpButton))
         {
-            TraceLog(LOG_INFO, "Tombol CHOOSE SKIN ditekan (placeholder).");
+            nextState = STATE_HELP;
         }
     }
     return nextState;

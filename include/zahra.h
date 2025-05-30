@@ -1,3 +1,4 @@
+// include/zahra.h
 #ifndef ZAHRA_H
 #define ZAHRA_H
 
@@ -5,8 +6,7 @@
 #include "bird_struct.h"
 #include "alexandrio.h"
 #include "pipa_ll.h"
-#include "zakky.h"
-#include "dava.h"
+#include "zakky.h" 
 
 typedef enum {
     GAME_READY,
@@ -16,5 +16,7 @@ typedef enum {
 
 GameOverState UpdateGameCollision(Bird bird, Singlelinkedlist *plist, Singlelinkedlist *tplist);
 void DrawGameOver(int screenWidth, int screenHeight, int currentScore);
+void HandleHelpState(GameState *currentState);
+void DrawHelpScreen(void);
 
 #endif // ZAHRA_H

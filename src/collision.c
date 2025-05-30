@@ -9,7 +9,6 @@
 GameOverState UpdateGameCollision(Bird bird, Singlelinkedlist *collision_plist, Singlelinkedlist *collision_tplist) {
     // Jika tidak ada pipa, tidak ada tabrakan pipa, burung masih bisa jatuh ke tanah atau terbang ke atas.
     // if (!collision_plist || !collision_plist->head) return GAME_ACTIVE;
-
     address p = NULL;
     if (collision_plist != NULL) {
         p = collision_plist->head;
