@@ -1,6 +1,7 @@
 #include "zakky.h"
 #include "dava.h"
-#include "qlio.h" // Untuk DrawLeaderboardScreenContent
+#include "qlio.h" // For DrawLeaderboardScreenContent
+#include "leaderboard.h" // Include the new leaderboard header
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -9,7 +10,7 @@ static Rectangle backButtonRec_BgSelect = { 20, 20, 150, 40 };
 static Rectangle backButtonRec_Leaderboard = { 20, 20, 150, 40 };
 
 
-void setupMenu() 
+void setupMenu()
 {
     GameState state = MENU;
 
@@ -23,27 +24,27 @@ void setupMenu()
     Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
     DrawRectangleRec(scoreButton, BLUE);
     DrawText("Leaderboard", LEBAR_LAYAR / 2 + 40, 265, 20, WHITE);
- 
-    // Gambar tombol "EXIT"
+
+    // Gambar tombol "choose background"
     Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
     DrawRectangleRec(bckButton, BLUE);
     DrawText("choose background", LEBAR_LAYAR / 5 + 5 , 335, 20, WHITE);
 
     Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
     DrawRectangleRec(skinButton, BLUE);
-    DrawText("choose skin", LEBAR_LAYAR / 2 + 35, 335, 20, WHITE);   
+    DrawText("choose skin", LEBAR_LAYAR / 2 + 35, 335, 20, WHITE);
 
     Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 190, 50 };
     DrawRectangleRec(exitButton, RED);
-    DrawText("EXIT", LEBAR_LAYAR / 2 - 50, 390, 20, WHITE);   
+    DrawText("EXIT", LEBAR_LAYAR / 2 - 50, 390, 20, WHITE);
 
 }
 
-GameState pilihMenu() 
+GameState pilihMenu()
 {
     GameState nextState = MENU;
     Vector2 mousePoint = GetMousePosition();
- 
+
     Rectangle startButton = { LEBAR_LAYAR / 3 - 100, 250, 200, 50 };
     Rectangle exitButton = { LEBAR_LAYAR / 2 - 100, 380, 200, 50 };
     Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
@@ -51,30 +52,30 @@ GameState pilihMenu()
     Rectangle skinButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
 
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) 
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        if (CheckCollisionPointRec(mousePoint, startButton)) 
+        if (CheckCollisionPointRec(mousePoint, startButton))
         {
             nextState = GAMEPLAY;
         }
-        if (CheckCollisionPointRec(mousePoint, bckButton)) 
+        if (CheckCollisionPointRec(mousePoint, bckButton))
         {
             nextState = BACKGROUND_SELECTION;
         }
-        if (CheckCollisionPointRec(mousePoint, scoreButton)) 
+        if (CheckCollisionPointRec(mousePoint, scoreButton))
         {
             nextState = LEADERBOARD;
-            LoadLeaderboard();
+            LoadLeaderboard(); // Load leaderboard data when entering leaderboard screen
         }
 
-        if (CheckCollisionPointRec(mousePoint, exitButton)) 
+        if (CheckCollisionPointRec(mousePoint, exitButton))
         {
             TraceLog(LOG_INFO, "Tombol EXIT ditekan. Menutup window.");
             CloseWindow();
             exit(0);
         }
 
-        if (CheckCollisionPointRec(mousePoint, skinButton)) 
+        if (CheckCollisionPointRec(mousePoint, skinButton))
         {
             TraceLog(LOG_INFO, "Tombol CHOOSE SKIN ditekan (placeholder).");
         }
@@ -128,7 +129,7 @@ void DrawBackgroundSelectionScreen(BackgroundSelector *bgSelector) {
     DrawText("KEMBALI", backButtonRec_BgSelect.x + backButtonRec_BgSelect.width/2 - MeasureText("KEMBALI", 20)/2, backButtonRec_BgSelect.y + 10, 20, WHITE);
 }
 
-// --- Fungsi untuk Layar Leaderboard ---
+// Fungsi untuk Layar Leaderboard 
 void InitLeaderboardScreen() {
     LoadLeaderboard(); // Pastikan data terbaru dimuat saat masuk layar
     TraceLog(LOG_INFO, "Memasuki layar leaderboard.");
@@ -136,19 +137,18 @@ void InitLeaderboardScreen() {
 
 GameState UpdateLeaderboardScreen(GameState currentGameState) {
     GameState nextState = currentGameState;
-    if ((IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backButtonRec_Leaderboard))) {
+    // Back to menu when BACKSPACE is pressed or back button is clicked
+    if (IsKeyPressed(KEY_BACKSPACE) ||
+        (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backButtonRec_Leaderboard))) {
         nextState = MENU;
     }
     return nextState;
 }
 
 void DrawLeaderboardScreen(Font font) { // Menerima Font sebagai parameter
-    // Gambar background menu (atau background statis khusus leaderboard)
-    // ClearBackground(DARKGRAY); // Contoh background sederhana
-    // Untuk konsistensi, bisa gambar background yang sama dengan menu atau background game default
-    // LoopDrawSelectedBackground(backgroundSelector, &bgX_menu_dummy); // Jika ingin background game di sini
 
-    DrawLeaderboardScreenContent(font); // Memanggil fungsi dari qlio.c (via qlio.h)
+
+    DrawLeaderboardContent(font); // Memanggil fungsi dari leaderboard.c
 
     // Tombol "Kembali"
     DrawRectangleRec(backButtonRec_Leaderboard, Fade(DARKBLUE, 0.7f));
