@@ -48,6 +48,7 @@ void DrawBackgroundSelectionScreen(BackgroundSelector *bgSelector);
 void InitLeaderboardScreen(void); // Mungkin tidak perlu jika LoadLeaderboard sudah cukup
 GameState UpdateLeaderboardScreen(GameState currentGameState);
 void DrawLeaderboardScreen(Font font); // Butuh font untuk menggambar teks
+void DrawCreditScreen(Font font);
 
 
 typedef struct AwanNode {

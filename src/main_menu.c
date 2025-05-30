@@ -38,6 +38,10 @@ void setupMenu()
     DrawRectangleRec(exitButton, RED);
     DrawText("Exit", LEBAR_LAYAR / 2 - 25, 395, 20, WHITE);
 
+    Rectangle creditButton = { 740, 20, 40, 40 };
+    DrawRectangleRec(creditButton, DARKBLUE);
+    DrawText("C", 750, 25, 30, WHITE);
+
 }
 
 GameState pilihMenu()
@@ -50,6 +54,7 @@ GameState pilihMenu()
     Rectangle scoreButton = { LEBAR_LAYAR / 2, 250, 200, 50 };
     Rectangle bckButton = { LEBAR_LAYAR / 3 - 100, 320, 200, 50 };
     Rectangle helpButton = { LEBAR_LAYAR / 2, 320, 200, 50 };
+    Rectangle creditButton = { 740, 20, 40, 40 };
 
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -79,8 +84,47 @@ GameState pilihMenu()
         {
             nextState = STATE_HELP;
         }
+
+        if (CheckCollisionPointRec(mousePoint, creditButton))
+        {
+            nextState = CREDIT;
+        }
+        
     }
     return nextState;
+}
+
+// Ganti fungsi DrawCreditScreen yang sudah ada dengan yang ini:
+void DrawCreditScreen(Font font) 
+{
+    const char *titleText = "CREDITS";
+    // Gambar judul di bagian atas
+    DrawText(titleText, GetScreenWidth()/2 - MeasureText(titleText, 40)/2, 50, 40, YELLOW);
+
+    // --- DAFTAR NAMA PEMBUAT GAME ---
+    // Definisikan teks untuk setiap nama dan NIM
+    const char* name1 = "1. Alexandrio Vega Bonito (241511067)";
+    const char* name2 = "2. Dava Ramadhan (241511070)";
+    const char* name3 = "3. Qlio Amanda Febriany (241511087)";
+    const char* name4 = "4. Zahra Aldila (241511094)";
+    const char* name5 = "5. Zakky Zhillan M.I (241511095)";
+    
+    int fontSize = 20; // Ukuran font agar muat di layar
+    int startY = 150;  // Posisi Y untuk nama pertama
+    int spacing = 40;  // Jarak vertikal antar nama
+
+    // Gambar setiap nama, diposisikan di tengah layar secara horizontal
+    DrawText(name1, GetScreenWidth()/2 - MeasureText(name1, fontSize)/2, startY, fontSize, RAYWHITE);
+    DrawText(name2, GetScreenWidth()/2 - MeasureText(name2, fontSize)/2, startY + (spacing * 1), fontSize, RAYWHITE);
+    DrawText(name3, GetScreenWidth()/2 - MeasureText(name3, fontSize)/2, startY + (spacing * 2), fontSize, RAYWHITE);
+    DrawText(name4, GetScreenWidth()/2 - MeasureText(name4, fontSize)/2, startY + (spacing * 3), fontSize, RAYWHITE);
+    DrawText(name5, GetScreenWidth()/2 - MeasureText(name5, fontSize)/2, startY + (spacing * 4), fontSize, RAYWHITE);
+
+    // Tombol "Kembali" (tidak ada perubahan di sini)
+    // Asumsi: backButtonRec_Credit sudah didefinisikan sebagai static variable di file ini
+    static Rectangle backButtonRec_Credit = { 20, 20, 150, 40 };
+    DrawRectangleRec(backButtonRec_Credit, Fade(DARKBLUE, 0.7f));
+    DrawText("KEMBALI", backButtonRec_Credit.x + backButtonRec_Credit.width/2 - MeasureText("KEMBALI", 20)/2, backButtonRec_Credit.y + 10, 20, WHITE);
 }
 
 GameState DrawMenu() {
@@ -88,8 +132,15 @@ GameState DrawMenu() {
     return pilihMenu();
 }
 
-void jedapause (PauseState *tmblPause) { tmblPause->isPause = false; }
-void tombolpause (PauseState *tmblPause) { tmblPause->isPause = !tmblPause->isPause; }
+void jedapause (PauseState *tmblPause) 
+{ 
+    tmblPause->isPause = false; 
+}
+
+void tombolpause (PauseState *tmblPause) 
+{ 
+    tmblPause->isPause = !tmblPause->isPause; 
+}
 
 void DrawPauseScreen(PauseState *tmblPause) {
     if (tmblPause->isPause) {

@@ -368,6 +368,11 @@ int main() {
             case STATE_HELP: { 
                 DrawHelpScreen();
             } break;
+            case CREDIT:
+            {
+                DrawCreditScreen(gameFont);
+            }
+            break;
             default: break;
         }
         EndDrawing();
