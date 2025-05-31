@@ -1,95 +1,61 @@
-//bird.c
 #include "raylib.h"
 #include "dava.h"
+#include "bird_struct.h"
 #include <stdlib.h>
-#include <time.h>
+#include <stdio.h>
 
-float bgX;
-
-// Buat satu node burung dan return head-nya
-BirdNode* InitBirdsLinkedList(int count) {
-    Image img = LoadImage("Flappy.png");
-    ImageResize(&img, img.width / 3, img.height / 3);
-
-    BirdNode *head = NULL;
-    BirdNode *tail = NULL;
-
-    for (int i = 0; i < count; i++) {
-        BirdNode *newNode = (BirdNode *)malloc(sizeof(BirdNode));
-        newNode->bird.texture = LoadTextureFromImage(img);
-        newNode->bird.position = (Vector2){0, 200};
-        newNode->bird.speed = 0;
-        newNode->next = NULL;
-
-        if (head == NULL) {
-            head = newNode;
-            tail = newNode;
-        } else {
-            tail->next = newNode;
-            tail = newNode;
-        }
+// Membuat dan menginisialisasi objek burung.
+Bird* InitBird() {
+    Bird* newBird = (Bird*)malloc(sizeof(Bird));
+    if (newBird == NULL) {
+        TraceLog(LOG_FATAL, "BIRD: Gagal mengalokasikan memori untuk burung!");
+        return NULL;
     }
 
-    UnloadImage(img);
-    return head;
+    const char* pathToLoad = "assets/Flappy.png";
+
+    // Muat gambar burung dari path default
+    Image birdImage = LoadImage(pathToLoad);
+
+    // Ubah ukuran gambar
+    ImageResize(&birdImage, birdImage.width / 3, birdImage.height / 3);
+    // Buat tekstur GPU dari gambar yang sudah dimuat dan di-resize
+    newBird->texture = LoadTextureFromImage(birdImage);
+    // Hapus data gambar dari memori CPU (RAM) karena sudah tidak diperlukan setelah tekstur dibuat.
+    UnloadImage(birdImage);
+
+    // Atur ukuran tabrakan (collision box) sama dengan ukuran tekstur.
+    newBird->collisionWidth = (float)newBird->texture.width;
+    newBird->collisionHeight = (float)newBird->texture.height;
+
+    // Inisialisasi posisi, kecepatan, dan skala burung.
+    newBird->position = (Vector2){100.0f, SCREEN_HEIGHT / 2.0f - newBird->collisionHeight / 2.0f};
+    newBird->speed = 0.0f;
+    newBird->scale = 1.0f;
+
+    return newBird;
 }
 
-void UpdateBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        current->bird.speed += GRAVITY;
+// Memperbarui logika burung setiap frame.
+void UpdateBird(Bird* bird) {
 
-        if (IsKeyPressed(KEY_SPACE)) {
-            current->bird.speed = FLAP_STRENGTH;
-        }
+    bird->speed += GRAVITY;
+    bird->position.y += bird->speed;
 
-        current->bird.position.y += current->bird.speed;
-
-        if (current->bird.position.y > 385) {
-            current->bird.position.y = 385;
-            current->bird.speed = 0;
-        }
-
-        if (current->bird.position.y < -15) {
-            current->bird.position.y = -15;
-            current->bird.speed = 0;
-        }
-
-        current = current->next;
+    // Jika burung menyentuh batas atas layar, tahan posisi di batas atas, kecepatan menjadi 0.
+    if (bird->position.y < 0) {
+        bird->position.y = 0;
+        bird->speed = 0;
     }
 }
 
-void DrawBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        DrawTexture(current->bird.texture, (int)current->bird.position.x, (int)current->bird.position.y, WHITE);
-        current = current->next;
-    }
+// Menggambar burung.
+void DrawBird(Bird* bird) {
+    DrawTextureEx(bird->texture, bird->position, 0.0f, bird->scale, WHITE);
 }
 
-void UnloadBirds(BirdNode *head) {
-    BirdNode *current = head;
-    while (current != NULL) {
-        UnloadTexture(current->bird.texture);
-        BirdNode *temp = current;
-        current = current->next;
-        free(temp);
-    }
-}
-
-// Background tetap pakai float
-void InitBackground(Texture2D *bg) {
-    *bg = LoadTexture("city.png");
-}
-
-void UpdateBackground(float *bgX) {
-    *bgX -= 0.5f;
-    if (*bgX <= -LEBAR_LAYAR) {
-        *bgX = 0;
-    }
-}
-
-void DrawBackground(Texture2D bg, float bgX) {
-    DrawTextureEx(bg, (Vector2){bgX, 0}, 0.0f, 1.0f, WHITE);
-    DrawTextureEx(bg, (Vector2){bgX + LEBAR_LAYAR, 0}, 0.0f, 1.0f, WHITE);
+// Membersihkan sumber daya burung.
+void UnloadBird(Bird* bird) {
+    UnloadTexture(bird->texture);
+    free(bird);
 }

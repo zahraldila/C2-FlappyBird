@@ -6,14 +6,13 @@
 extern int score;
 extern int highscore;
 
-void InitSkor();
-void TambahSkor();
-void SimpanHighscore();
+void InitSkor(void);
+void TambahSkor(void);
+void SimpanHighscore(void); // Menyimpan highscore tunggal
 void TampilkanSkor(Font font);
-void ResetSkor();
+void ResetSkor(void);
 
-int bacaHighScore();
-int bacaHighScoreDariFileTanpaLog();
-void simpanSkorKeFile(int skor);
+int bacaHighScore(void);
+int bacaHighScoreDariFileTanpaLog(void);
 
 #endif

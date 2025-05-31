@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+float bgX = 0; 
+
 AwanNode* createAwan(float x, float y) 
 {
     AwanNode *nodeBaru = (AwanNode *)malloc(sizeof(AwanNode));

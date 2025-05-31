@@ -1,21 +1,17 @@
 #ifndef BIRD_STRUCT_H
 #define BIRD_STRUCT_H
 
-#define LEBAR_LAYAR 800
-#define TINGGI_LAYAR 450
-
 #include "raylib.h"
+
+// ======================== Struktur untuk Burung ========================
 typedef struct {
+    Texture2D texture;
     Vector2 position;
     float speed;
-    float scale;
-    Texture2D texture;
+    float scale; // Meskipun tekstur di-resize, scale bisa untuk penyesuaian tambahan jika perlu
+    float collisionWidth;   // Lebar bounding box untuk tabrakan (lebih kecil dari texture.width)
+    float collisionHeight;  // Tinggi bounding box untuk tabrakan (lebih kecil dari texture.height)
+    // Mungkin perlu juga collisionOffsetX dan collisionOffsetY jika bounding box tidak berpusat pada position
 } Bird;
-
-// Untuk linked list burung
-typedef struct BirdNode {
-    Bird bird;
-    struct BirdNode *next;
-} BirdNode;
 
 #endif

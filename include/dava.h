@@ -1,21 +1,41 @@
 #ifndef DAVA_H
 #define DAVA_H
 
-#include "raylib.h"
 #include "bird_struct.h"
+#include "raylib.h"
 
-#define MAX_BIRDS 1
-#define GRAVITY 0.5f
-#define FLAP_STRENGTH -8.0f
+// Konstanta game
+#define SCREEN_WIDTH 800    // Lebar layar game.
+#define SCREEN_HEIGHT 450   // Tinggi layar game.
 
-// Fungsi untuk linked list
-BirdNode* InitBirdsLinkedList(int count);
-void UpdateBirds(BirdNode *head);
-void DrawBirds(BirdNode *head);
-void UnloadBirds(BirdNode *head);
+#define GRAVITY 0.25f         // Nilai gravitasi untuk burung.
+#define FLAP_STRENGTH -5.5f   // Kekuatan kepakan/lompatan burung.
 
-void InitBackground(Texture2D *bg);
-void UpdateBackground(float *bgX);
-void DrawBackground(Texture2D bg, float bgX);
+// Fungsi terkait Burung
+Bird* InitBird(void);
+void UpdateBird(Bird* bird);
+void DrawBird(Bird* bird);
+void UnloadBird(Bird* bird);
+
+// Bagian untuk sistem pemilihan background.
+typedef struct BackgroundNode {
+    Texture2D texture;
+    const char* filePath;
+    struct BackgroundNode* next;
+    struct BackgroundNode* prev;
+} BackgroundNode;
+
+typedef struct {
+    BackgroundNode* head;
+    BackgroundNode* current;
+    int total;
+} BackgroundSelector;
+
+BackgroundSelector* InitBackgroundSelector(void);
+void DrawSelectedBackground(BackgroundSelector* selector);
+void NextBackground(BackgroundSelector* selector);
+void PreviousBackground(BackgroundSelector* selector);
+void UnloadBackgroundSelector(BackgroundSelector* selector);
+void LoopDrawSelectedBackground(BackgroundSelector* selector, float* bgX);
 
 #endif
