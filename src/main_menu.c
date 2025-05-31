@@ -124,6 +124,8 @@ void DrawCreditScreen(Font font) {
     // Gambar tombol kembali
     DrawRectangleRec(backButtonRec_Credit, Fade(DARKBLUE, 0.7f));
     DrawTextEx(font, "KEMBALI", (Vector2){ backButtonRec_Credit.x + backButtonRec_Credit.width/2 - MeasureTextEx(font, "KEMBALI", 20, 1).x/2, backButtonRec_Credit.y + 10 }, 20, 1, WHITE);
+    const char* backMsg = "Tekan BACKSPACE untuk Kembali ke Menu";
+    DrawText(backMsg, GetScreenWidth()/2 - MeasureText(backMsg, 20)/2, GetScreenHeight() - 70, 20, DARKBLUE);
 }
 
 GameState UpdateCreditScreen(GameState currentGameState) 
