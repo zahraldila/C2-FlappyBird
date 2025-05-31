@@ -16,8 +16,6 @@
 
 extern Color TANAH;
 extern Color RUMPUT;
-// extern int Pipa[3][3];
-// extern int TutupPipa[3][3];
 extern Singlelinkedlist *plist;
 extern Singlelinkedlist *tplist;
 
