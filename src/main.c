@@ -8,7 +8,7 @@
 #include "bird_struct.h"
 #include "pipa_ll.h"
 #include "dava.h"
-#include "zakky.h" // Untuk GameState, MENU, GAMEPLAY, PauseState, jedapause, tombolpause, setupMenu, pilihMenu, UpdateBackgroundSelectionScreen, DrawBackgroundSelectionScreen, InitLeaderboardScreen, UpdateLeaderboardScreen, DrawLeaderboardScreen, awanList, JUMLAH_AWAN, SCREEN_WIDTH, KECEPATAN_BACKGROUND_SCROLL, updateAwan, gambarAwan, freeAwan, bgX
+#include "zakky.h" // Untuk GameState, MENU, GAMEPLAY, PauseState, jedapause, tombolpause, setupMenu, pilihMenu, awanList, JUMLAH_AWAN, SCREEN_WIDTH, KECEPATAN_BACKGROUND_SCROLL, updateAwan, gambarAwan, freeAwan, bgX
 #include "alexandrio.h" // Untuk Hapus_semua_pipa, Buat_pipa, Pipa_berhenti, Pergerakan_pipa, Gambar_pipa, LEBAR_PIPA
 #include "zahra.h" // Untuk GameOverState, UpdateGameCollision, DrawGameOver, HandleHelpState, DrawHelpScreen
 #include "qlio.h" // Untuk InitSkor, TambahSkor, ResetSkor, TampilkanSkor, SimpanHighscore, IsMenuMusicCurrentlyPlaying, PlayMenuMusic, StopMenuMusic, InitSounds, PlaySoundEffect, UnloadSounds, UpdateMusic, score
@@ -77,8 +77,9 @@ int main() {
     bool scoreAddedToLeaderboardThisSession = false;
 
     AwanNode *awanList = NULL;
-    for (int j = 0; j < JUMLAH_AWAN; j++) {
-        float x_awan = (float)SCREEN_WIDTH + j * 200.0f;
+    for (int j = 0; j < JUMLAH_AWAN; j++) 
+    {
+        float x_awan = (float)SCREEN_WIDTH + j * 200;
         float y_awan = (float)(rand() % 150);
         insertAwan(&awanList, x_awan, y_awan);
     }

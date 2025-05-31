@@ -155,7 +155,8 @@ void tombolpause (PauseState *tmblPause)
     tmblPause->isPause = !tmblPause->isPause; 
 }
 
-void DrawPauseScreen(PauseState *tmblPause) {
+void DrawPauseScreen(PauseState *tmblPause) 
+{
     if (tmblPause->isPause) {
         DrawRectangle(0,0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
         const char* pauseText = "GAME PAUSED";
