@@ -12,32 +12,30 @@
 #define FLAP_STRENGTH -5.5f   // Kekuatan kepakan/lompatan burung.
 
 // Fungsi terkait Burung
-// Catatan: InitBird() mengembalikan pointer Bird* untuk konsistensi dengan bird.c (malloc).
-Bird* InitBird(void);           // Deklarasi fungsi inisialisasi burung.
-void UpdateBird(Bird* bird);    // Deklarasi fungsi update logika burung.
-void DrawBird(Bird* bird);      // Deklarasi fungsi menggambar burung.
-void UnloadBird(Bird* bird);    // Deklarasi fungsi unload sumber daya burung.
+Bird* InitBird(void);
+void UpdateBird(Bird* bird);
+void DrawBird(Bird* bird);
+void UnloadBird(Bird* bird);
 
-// ======================== Background Selector (Linked List) ========================
 // Bagian untuk sistem pemilihan background.
-typedef struct BackgroundNode {   // Node untuk linked list background.
-    Texture2D texture;            // Tekstur background.
-    const char* filePath;         // Path file gambar background.
-    struct BackgroundNode* next;  // Pointer ke node background selanjutnya.
-    struct BackgroundNode* prev;  // Pointer ke node background sebelumnya.
+typedef struct BackgroundNode {
+    Texture2D texture;
+    const char* filePath;
+    struct BackgroundNode* next;
+    struct BackgroundNode* prev;
 } BackgroundNode;
 
-typedef struct {              // Pengelola untuk linked list background.
-    BackgroundNode* head;     // Pointer ke background pertama.
-    BackgroundNode* current;  // Pointer ke background yang sedang aktif.
-    int total;                // Jumlah total background.
+typedef struct {
+    BackgroundNode* head;
+    BackgroundNode* current;
+    int total;
 } BackgroundSelector;
 
-BackgroundSelector* InitBackgroundSelector(void);                          // Deklarasi fungsi inisialisasi background selector.
-void DrawSelectedBackground(BackgroundSelector* selector);                 // Deklarasi fungsi menggambar background terpilih (statis).
-void NextBackground(BackgroundSelector* selector);                         // Deklarasi fungsi untuk memilih background berikutnya.
-void PreviousBackground(BackgroundSelector* selector);                     // Deklarasi fungsi untuk memilih background sebelumnya.
-void UnloadBackgroundSelector(BackgroundSelector* selector);               // Deklarasi fungsi unload sumber daya background selector.
-void LoopDrawSelectedBackground(BackgroundSelector* selector, float* bgX); // Deklarasi fungsi menggambar background terpilih dengan scrolling.
+BackgroundSelector* InitBackgroundSelector(void);
+void DrawSelectedBackground(BackgroundSelector* selector);
+void NextBackground(BackgroundSelector* selector);
+void PreviousBackground(BackgroundSelector* selector);
+void UnloadBackgroundSelector(BackgroundSelector* selector);
+void LoopDrawSelectedBackground(BackgroundSelector* selector, float* bgX);
 
 #endif
