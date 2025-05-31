@@ -19,6 +19,7 @@
                 "src/PipaLinkedList.c",
                 "src/background_selector.c",
                 "src/leaderboard.c",
+                "src/help_menu.c",
                 "-I", "./include",
                 "-I", "C:/raylib-5.5_win64_mingw-w64/include",
                 "-L", "C:/raylib-5.5_win64_mingw-w64/lib",

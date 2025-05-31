@@ -1,82 +1,91 @@
 # 🐦 Flappy Bird - Proyek Pengembangan Aplikasi Berbasis Library (C2)
-
 [![Raylib Badge](https://img.shields.io/badge/Made%20with-Raylib-blue.svg)](https://www.raylib.com/)
 [![C Language Badge](https://img.shields.io/badge/Language-C-blue.svg)](https://en.wikipedia.org/wiki/C_(programming_language))
 
 ## 🌟 Tentang Proyek Ini
-
-Selamat datang di proyek Flappy Bird kami! Ini adalah implementasi klasik game Flappy Bird yang dikembangkan menggunakan bahasa pemrograman C dan didukung oleh library **Raylib**.
-
-Tujuan utama proyek ini adalah untuk mengaplikasikan konsep-konsep pemrograman game, pengelolaan state, deteksi tabrakan, dan integrasi library eksternal dalam konteks pembelajaran. Kami telah berfokus pada pengalaman bermain yang responsif dan intuitif, lengkap dengan berbagai fitur tambahan untuk meningkatkan keseruan.
-
-Proyek ini adalah bagian dari mata kuliah Pengembangan Aplikasi Berbasis Library, Program Studi D3 - Teknik Informatika, Jurusan Teknik Komputer dan Informatika.
+Flappy Bird adalah game 2D berbasis pixel di mana pemain mengendalikan burung yang harus melewati rintangan berupa pipa tanpa menabraknya. Selain pipa, pemain juga harus menghindari menyentuh tanah karena akan menyebabkan game over. Game ini dibuat menggunakan bahasa C dan library Raylib untuk menangani grafik dan input dari pemain.
+Proyek ini merupakan bagian dari mata kuliah Pengembangan Aplikasi Berbasis Library, Program Studi D3 - Teknik Informatika, Jurusan Teknik Komputer dan Informatika.
 
 ## 📸 Tampilan Game
-
 ![Gameplay Flappy Bird](assets/tampilan1.png)
 ![Gameplay Flappy Bird](assets/tampilan2.png)
 
 ## ✨ Fitur Utama
-
-* **Gameplay Klasik Flappy Bird:** Rasakan keseruan asli game ini dengan kontrol yang sederhana dan tantangan yang adiktif.
-* **Gravitasi Realistis:** Gerakan burung yang responsif terhadap gravitasi dan input pemain.
-* **Rintangan Pipa Dinamis:** Pipa-pipa yang bergerak secara horizontal sebagai rintangan utama.
-* **Deteksi Tabrakan Akurat:** Penanganan tabrakan antara burung dengan pipa atau tanah untuk menentukan Game Over.
-* **Sistem Skor:** Lacak skor tertinggi dan bersaing dengan pemain lain.
-* **Leaderboard:** Catat skor tertinggi dan bersaing dengan teman-teman.
-* **Menu Utama Interaktif:** Navigasi mudah ke berbagai opsi game.
-* **Tampilan Game Over:** Layar informatif saat permainan berakhir.
-* **Efek Suara dan Musik:** Pengalaman audio yang imersif untuk menambah keseruan.
-* **Pilihan Latar Belakang:** Kustomisasi tampilan game Anda dengan berbagai pilihan background.
+- Gameplay Flappy Bird klasik dengan kontrol sederhana.
+- Gerakan burung mengikuti gravitasi dan input pemain.
+- Rintangan pipa bergerak dari kanan ke kiri.
+- Deteksi tabrakan burung dengan pipa atau tanah yang akurat untuk game over.
+- Sistem skor dan leaderboard.
+- Menu utama yang mudah digunakan.
+- Tampilan layar game over yang informatif.
+- Efek suara dan musik untuk pengalaman bermain lebih seru.
+- Pilihan latar belakang yang dapat diubah.
 
 ## 🎮 Cara Bermain
+- Tekan **SPACE BAR** untuk membuat burung terbang ke atas.
+- Hindari tabrakan dengan pipa dan tanah.
+- Setiap melewati sepasang pipa, skor bertambah 1.
+- Game over jika burung menabrak pipa, menyentuh tanah, atau keluar layar atas.
+- Tekan **P** untuk pause atau melanjutkan permainan.
+- Saat game over, tekan **ENTER** untuk mulai ulang.
+- Tekan **BACKSPACE** dari layar game over atau bantuan untuk kembali ke menu utama.
+- Masukkan nama sebelum mulai untuk disimpan di leaderboard.
 
-Meskipun terlihat sederhana, Flappy Bird membutuhkan ketepatan dan timing yang baik!
-
-* **Lompat/Terbang:** Tekan tombol **SPACE BAR** untuk membuat burung melompat dan terbang lebih tinggi. Kendalikan frekuensi lompatan Anda untuk menjaga burung tetap di udara.
-* **Menghindari Rintangan:** Tujuan utama adalah melewati **pipa-pipa** yang bergerak dari kanan ke kiri tanpa menabraknya.
-* **Mencetak Skor:** Setiap kali burung berhasil melewati sepasang pipa, skor Anda akan bertambah 1.
-* **Game Over:** Permainan berakhir jika burung menyentuh pipa, menabrak tanah, atau terbang terlalu tinggi hingga keluar layar.
-* **Pause/Resume:** Saat bermain, tekan tombol **'P'** untuk menjeda atau melanjutkan permainan.
-* **Restart Game:** Di layar Game Over, tekan **ENTER** untuk memulai permainan baru.
-* **Kembali ke Menu:** Dari layar Game Over atau Bantuan, tekan **BACKSPACE** untuk kembali ke menu utama.
-* **Input Nama:** Sebelum memulai permainan baru, Anda akan diminta memasukkan nama untuk dicatat di Leaderboard.
 
 ## 🚀 Instalasi dan Cara Menjalankan Game
+### Cara 1
+1. Unduh file game dari Github
+https://github.com/zahraldila/C2-FlappyBird/releases
+2. Ekstrak file Flappybird.v1.0.zip
+3. Jalankan flappybird.exe
+4. Tekan Spasi untuk bermain
+5. Hindari tabrakan dengan pipa atau tanah untuk mencetak skor
 
-Untuk dapat memainkan game ini dari repositori GitHub, Anda perlu mengkompilasi kode sumbernya. Proyek ini dibangun menggunakan **Raylib**, jadi Anda perlu menyiapkan lingkungan pengembangan yang sesuai.
-
-### Langkah-langkah Cepat (Disarankan: Menggunakan VS Code)
+### Cara 2
+## ⚙️ Persyaratan Sistem
+- Compiler C (`gcc`/`clang`)
+- Make utility (`make`)
+- Git (`MSYS2`, `MinGW`, atau `WSL`)
+- Raylib
 
 #### 1. Clone Repositori & Inisialisasi Submodul
-
-Buka terminal atau Git Bash Anda, lalu clone repositori dan inisialisasi submodul Raylib:
-
+1. Buka terminal (Command Prompt, PowerShell, Git Bash, atau Terminal di macOS/Linux).  
+2. Clone repositori dengan perintah berikut:  
 ```bash
-git clone [https://github.com/zahraldila/c2-flappybird.git](https://github.com/zahraldila/c2-flappybird.git)
+   git clone https://github.com/zahraldila/c2-flappybird.git
+```
+3. Masuk ke folder proyek:
+```bash
 cd c2-flappybird
+```
+4. Inisialisasi dan update submodul Raylib (dibutuhkan agar Raylib terunduh):
+```bash
 git submodule update --init --recursive
 ```
 
-#### 2. Buka Proyek di Visual Studio Code
-1. Buka folder proyek c2-flappybird di VS Code (File > Open Folder...).
-2. Pastikan Anda telah menginstal ekstensi C/C++ dari Microsoft (jika belum, VS Code biasanya akan merekomendasikannya).
-3. Buka Command Palette (Ctrl+Shift+P atau Cmd+Shift+P).
-4. Ketik "Tasks: Run Build Task" dan pilih opsi build release.
-5. VS Code akan secara otomatis menjalankan perintah kompilasi yang diperlukan. Anda akan melihat prosesnya di panel "Terminal".
-6. Setelah kompilasi selesai (tanpa error), Anda akan menemukan file executable (flappybird.exe di Windows atau flappybird di Linux/macOS) di direktori utama proyek.
+#### 2. Build Proyek
+1. Buka terminal:
 
-#### 3. Jalankan Game
-Dari terminal di direktori proyek, atau langsung dari VS Code jika executable sudah dibuat:
+    Windows: bisa menggunakan Command Prompt, PowerShell, Git Bash, atau terminal di VS Code.
 
-**Untuk Windows:**
+    Linux/macOS: Terminal.
+
+3. Masuk ke folder proyek
+Jika proyek disimpan di direktori Downloads/c2-flappybird, jalankan perintah berikut untuk masuk ke folder proyek melalui terminal:
 ```bash
-.\flappybird.exe
+cd Downloads/c2-flappybird
 ```
 
-**Untuk Linux/macOS:**
+4. Pastikan make dan compiler C (gcc atau setara) sudah terinstal. Jalankan perintah berikut untuk membangun executable:
 ```bash
-./flappybird
+make build
+```
+Jika berhasil, file game.exe (untuk Windows) atau game (untuk Linux/macOS) akan muncul di direktori utama.
+
+#### 3. Jalankan Game
+Untuk menjalankan game:
+```bash
+make run
 ```
 
 ## 👥 Anggota Tim C2

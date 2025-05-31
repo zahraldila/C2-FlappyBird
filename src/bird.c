@@ -6,13 +6,13 @@
 
 // Membuat dan menginisialisasi objek burung.
 Bird* InitBird() {
-    Bird* newBird = (Bird*)malloc(sizeof(Bird));                                // Alokasi memori untuk Bird.
-    if (newBird == NULL) {                                                      // Cek kegagalan alokasi memori.
-        TraceLog(LOG_FATAL, "BIRD: Gagal mengalokasikan memori untuk burung!"); // Log error fatal.
-        return NULL;                                                            // Kembalikan NULL jika alokasi gagal.
+    Bird* newBird = (Bird*)malloc(sizeof(Bird));
+    if (newBird == NULL) {
+        TraceLog(LOG_FATAL, "BIRD: Gagal mengalokasikan memori untuk burung!");
+        return NULL;
     }
 
-    const char* pathToLoad = "assets/Flappy.png"; // Path skin burung default, selalu digunakan.
+    const char* pathToLoad = "assets/Flappy.png";
 
     // Muat gambar burung dari path default
     Image birdImage = LoadImage(pathToLoad);
@@ -29,34 +29,33 @@ Bird* InitBird() {
     newBird->collisionHeight = (float)newBird->texture.height;
 
     // Inisialisasi posisi, kecepatan, dan skala burung.
-    newBird->position = (Vector2){100.0f, SCREEN_HEIGHT / 2.0f - newBird->collisionHeight / 2.0f}; // Posisi awal di tengah layar vertikal.
-    newBird->speed = 0.0f;                                                                         // Kecepatan awal vertikal.
-    newBird->scale = 1.0f;                                                                         // Skala visual normal (tidak diperbesar/diperkecil).
+    newBird->position = (Vector2){100.0f, SCREEN_HEIGHT / 2.0f - newBird->collisionHeight / 2.0f};
+    newBird->speed = 0.0f;
+    newBird->scale = 1.0f;
 
-    return newBird; // Kembalikan objek burung yang sudah diinisialisasi.
+    return newBird;
 }
 
 // Memperbarui logika burung setiap frame.
 void UpdateBird(Bird* bird) {
 
-    bird->speed += GRAVITY; // Terapkan gravitasi ke kecepatan.
-    bird->position.y += bird->speed; // Update posisi Y berdasarkan kecepatan.
+    bird->speed += GRAVITY;
+    bird->position.y += bird->speed;
 
-    // Jika burung menyentuh batas atas layar.
+    // Jika burung menyentuh batas atas layar, tahan posisi di batas atas, kecepatan menjadi 0.
     if (bird->position.y < 0) {
-        bird->position.y = 0; // Tahan posisi di batas atas.
-        bird->speed = 0;      // Hentikan kecepatan naik.
+        bird->position.y = 0;
+        bird->speed = 0;
     }
-    // Batas bawah (tabrakan dengan tanah) ditangani di file collision.c.
 }
 
 // Menggambar burung.
 void DrawBird(Bird* bird) {
-    DrawTextureEx(bird->texture, bird->position, 0.0f, bird->scale, WHITE); // Gambar tekstur burung.
+    DrawTextureEx(bird->texture, bird->position, 0.0f, bird->scale, WHITE);
 }
 
 // Membersihkan sumber daya burung.
 void UnloadBird(Bird* bird) {
-    UnloadTexture(bird->texture); // Hapus tekstur dari VRAM.
-    free(bird);                   // Bebaskan memori struct Bird.
+    UnloadTexture(bird->texture);
+    free(bird);
 }
