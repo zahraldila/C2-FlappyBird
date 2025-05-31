@@ -15,7 +15,8 @@ Color TANAH = {240, 164, 0 , 255};
 Color RUMPUT = {0, 150, 0 , 255};
 bool Stop = true;
 
-void Buat_pipa() {
+//Modul untuk inisialisasi objek pipa beserta pergerakan vertikalnya ketika skornya sudah lebih dari 14
+void Buat_pipa() { 
     for(int PIPA_KE = 0; PIPA_KE < 3; PIPA_KE++) {
         address newNodePipa = buatNodePipa(PIPA_KE);
         address newNodeTPipa = buatNodeTPipa(PIPA_KE, newNodePipa->tinggi);
@@ -24,7 +25,7 @@ void Buat_pipa() {
         insertBelakang(newNodePipa, newNodeTPipa);
     }
 }
-
+//Modul untuk mengatur pergerakan pipa secara horizontal dari kanan ke kiri
 void Pergerakan_pipa(){
     address pipaTemp = plist->head;
     address tpipaTemp = tplist->head;
@@ -32,8 +33,8 @@ void Pergerakan_pipa(){
     while (pipaTemp != KOSONG && tpipaTemp != KOSONG) {
         pipaTemp->korx -= KECEPATAN_PIPA;
         tpipaTemp->korx -= KECEPATAN_PIPA;
-
-        if (pipaTemp->korx + LEBAR_PIPA < 0) {
+        //jika pipa sudah keluar dari layar maka pipa tersebut akan dihapus dan digantikan dengan pipa yang baru dengan modul insertBelakang
+        if (pipaTemp->korx + LEBAR_PIPA < 0) { 
             deleteFirst();
             address newNodePipa = buatNodePipa(0); 
             address newNodeTPipa = buatNodeTPipa(0, newNodePipa->tinggi);
@@ -45,14 +46,14 @@ void Pergerakan_pipa(){
         tpipaTemp = tpipaTemp->next;
     }
 }
-
-
+//modul yang berisi proses untuk menampilkan pipa ke layar
 void Gambar_pipa(int Skor){
     address pipaTemp = plist->head;
     address tpipaTemp = tplist->head;
     int i = 0;
 
     while(pipaTemp != KOSONG && tpipaTemp != KOSONG) {
+        //Jika skor pemain lebih dari 14 (yaitu 15) maka pipa akan bergerak naik turun (vertikal) selain bergerak secara horizontal
         if(Skor > 14 && Stop) {
             // Update posisi naik turun per node
             if (Gerak[i] == 0) {
@@ -69,10 +70,7 @@ void Gambar_pipa(int Skor){
         }
 
         // Gambar setiap pipa
-        DrawRectangle(pipaTemp->korx, 0, LEBAR_PIPA, pipaTemp->tinggi, GREEN);
-        DrawRectangle(tpipaTemp->korx, pipaTemp->tinggi - 30, LEBAR_PIPA + 20, 30, GREEN);
-        DrawRectangle(pipaTemp->korx, pipaTemp->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - pipaTemp->tinggi - JARAK_PIPA_ATAS_BAWAH, GREEN);
-        DrawRectangle(tpipaTemp->korx, pipaTemp->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA + 20, 30, GREEN);
+        Munculkan_Pipa(pipaTemp, tpipaTemp);
         pipaTemp = pipaTemp->next;
         tpipaTemp = tpipaTemp->next;
         i++;
@@ -82,12 +80,22 @@ void Gambar_pipa(int Skor){
 }
 
 
+//Modul untuk memunculkan gambar objek pipa ke layar
+void Munculkan_Pipa(address pipaTemp,address tpipaTemp){
+    DrawRectangle(pipaTemp->korx, 0, LEBAR_PIPA, pipaTemp->tinggi, GREEN);
+    DrawRectangle(tpipaTemp->korx, pipaTemp->tinggi - 30, LEBAR_PIPA + 20, 30, GREEN);
+    DrawRectangle(pipaTemp->korx, pipaTemp->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA, TINGGI_LAYAR - pipaTemp->tinggi - JARAK_PIPA_ATAS_BAWAH, GREEN);
+    DrawRectangle(tpipaTemp->korx, pipaTemp->tinggi + JARAK_PIPA_ATAS_BAWAH, LEBAR_PIPA + 20, 30, GREEN);
+}
+
+//Modul untuk menghapus semua pipa agar tidak terjadi memory leak
 void Hapus_semua_pipa(){
     if (plist != KOSONG && tplist != KOSONG){ 
     freeList();
     }
 }
 
+//Modul untuk menghentikan pergerakan pipa (dipanggil saat game over)
 void Pipa_berhenti(bool Cek){
     Stop = Cek;
 }

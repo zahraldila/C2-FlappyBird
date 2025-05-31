@@ -54,6 +54,7 @@ BackgroundSelector* InitBackgroundSelector() {
 void DrawSelectedBackground(BackgroundSelector* selector) {
     if (selector && selector->current) {
         DrawTexture(selector->current->texture, 0, 0, WHITE);
+    }
 }
 
 // Menggambar background yang dipilih dengan efek scrolling berulang.
