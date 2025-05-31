@@ -3,6 +3,7 @@
 
 #include "bird_struct.h"
 #include "raylib.h"
+#include "zakky.h"
 
 // Konstanta game
 #define SCREEN_WIDTH 800    // Lebar layar game.
@@ -37,5 +38,8 @@ void NextBackground(BackgroundSelector* selector);
 void PreviousBackground(BackgroundSelector* selector);
 void UnloadBackgroundSelector(BackgroundSelector* selector);
 void LoopDrawSelectedBackground(BackgroundSelector* selector, float* bgX);
+void InitBackgroundSelectionScreen(void);
+GameState UpdateBackgroundSelectionScreen(BackgroundSelector *bgSelector, GameState currentGameState);
+void DrawBackgroundSelectionScreen(BackgroundSelector *bgSelector);
 
 #endif
