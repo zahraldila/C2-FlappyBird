@@ -101,6 +101,31 @@ GameState DrawMenu()
     return pilihMenu();
 }
 
+void DrawCreditScreen(Font font) {
+    const char *titleText = "CREDITS";
+    DrawTextEx(font, titleText, (Vector2){ (float)GetScreenWidth()/2 - MeasureTextEx(font, titleText, 40, 2).x/2, 50 }, 40, 2, YELLOW); // Menggunakan DrawTextEx untuk konsistensi dengan font
+
+    const char* name1 = "1. Alexandrio Vega Bonito (241511067)";
+    const char* name2 = "2. Dava Ramadhan (241511070)";
+    const char* name3 = "3. Qlio Amanda Febriany (241511087)";
+    const char* name4 = "4. Zahra Aldila (241511094)";
+    const char* name5 = "5. Zakky Zhillan M.I (241511095)";
+    
+    int fontSize = 20;
+    int startY = 150;
+    int spacing = 40;
+
+    DrawTextEx(font, name1, (Vector2){ (float)GetScreenWidth()/2 - MeasureTextEx(font, name1, fontSize, 1).x/2, (float)startY }, fontSize, 1, RAYWHITE);
+    DrawTextEx(font, name2, (Vector2){ (float)GetScreenWidth()/2 - MeasureTextEx(font, name2, fontSize, 1).x/2, (float)(startY + spacing * 1) }, fontSize, 1, RAYWHITE);
+    DrawTextEx(font, name3, (Vector2){ (float)GetScreenWidth()/2 - MeasureTextEx(font, name3, fontSize, 1).x/2, (float)(startY + spacing * 2) }, fontSize, 1, RAYWHITE);
+    DrawTextEx(font, name4, (Vector2){ (float)GetScreenWidth()/2 - MeasureTextEx(font, name4, fontSize, 1).x/2, (float)(startY + spacing * 3) }, fontSize, 1, RAYWHITE);
+    DrawTextEx(font, name5, (Vector2){ (float)GetScreenWidth()/2 - MeasureTextEx(font, name5, fontSize, 1).x/2, (float)(startY + spacing * 4) }, fontSize, 1, RAYWHITE);
+
+    // Gambar tombol kembali
+    DrawRectangleRec(backButtonRec_Credit, Fade(DARKBLUE, 0.7f));
+    DrawTextEx(font, "KEMBALI", (Vector2){ backButtonRec_Credit.x + backButtonRec_Credit.width/2 - MeasureTextEx(font, "KEMBALI", 20, 1).x/2, backButtonRec_Credit.y + 10 }, 20, 1, WHITE);
+}
+
 GameState UpdateCreditScreen(GameState currentGameState) 
 {
     GameState nextState = currentGameState;
