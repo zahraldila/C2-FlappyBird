@@ -114,7 +114,8 @@ int main() {
                 playerNameInput[0] = '\0';
                 needNameInput = false;
 
-                if (IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) {
+                if (IsAudioDeviceReady() && !IsMenuMusicCurrentlyPlaying()) 
+                {
                     PlayMenuMusic();
                 }
                 bgX -= KECEPATAN_BACKGROUND_SCROLL;
@@ -210,7 +211,10 @@ int main() {
                     }
                 } else {
                     // --- LOGIKA GAMEPLAY NORMAL ---
-                    if (IsKeyPressed(KEY_P) && gameOverState != GAME_OVER) { tombolpause(&tmblpause); }
+                    if (IsKeyPressed(KEY_P) && gameOverState != GAME_OVER) 
+                    { 
+                        tombolpause(&tmblpause); 
+                    }
 
                     if (!tmblpause.isPause) {
                         bgX -= KECEPATAN_BACKGROUND_SCROLL;
@@ -308,24 +312,42 @@ int main() {
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode)) 
-        {
-            LoopDrawSelectedBackground(backgroundSelector, &bgX);
+        if (currentState == MENU) {
+            LoopDrawSelectedBackground(backgroundSelector, &bgX); 
+            gambarAwan(awanList); 
+        } else if (currentState == GAMEPLAY) {
+            if (!enteringNameMode) {
+                LoopDrawSelectedBackground(backgroundSelector, &bgX);
+                gambarAwan(awanList); 
+            } 
+            else 
+            { 
+                if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) 
+                {
+                    DrawTexture(backgroundSelector->current->texture, 0, 0, WHITE);
+                } 
+                else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) 
+                {
+                    DrawTexture(backgroundSelector->head->texture, 0, 0, WHITE);
+                }
+            }
         } 
-        else if (currentState == LEADERBOARD || (currentState == GAMEPLAY && enteringNameMode) ||
-                   currentState == STATE_HELP) 
+
+        else if (currentState == BACKGROUND_SELECTION) 
         {
-            if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) {
+            gambarAwan(awanList); 
+        } 
+
+        else if (currentState == LEADERBOARD || currentState == STATE_HELP || currentState == CREDIT) 
+        {
+            if (backgroundSelector && backgroundSelector->current && backgroundSelector->current->texture.id != 0) 
+            {
                 DrawTexture(backgroundSelector->current->texture, 0, 0, WHITE);
-            } else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) {
+            } 
+            else if (backgroundSelector && backgroundSelector->head && backgroundSelector->head->texture.id != 0) 
+            {
                 DrawTexture(backgroundSelector->head->texture, 0, 0, WHITE);
             }
-        }
-
-        // Awan
-        if (currentState == MENU || (currentState == GAMEPLAY && !tmblpause.isPause && !enteringNameMode) ||
-            currentState == BACKGROUND_SELECTION || currentState == LEADERBOARD ||
-            currentState == STATE_HELP) { 
             gambarAwan(awanList);
         }
 
@@ -373,7 +395,10 @@ int main() {
                         DrawGameOver(SCREEN_WIDTH, SCREEN_HEIGHT, score);
                     }
 
-                    if (tmblpause.isPause && !enteringNameMode) { DrawPauseScreen(&tmblpause); }
+                    if (tmblpause.isPause) 
+                    { 
+                        DrawPauseScreen(&tmblpause); 
+                    }
                 }
             } break;
             case STATE_HELP: { 
